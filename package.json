@@ -1,0 +1,55 @@
+{
+  "name": "ustapp",
+  "description": "UST Configuration App",
+  "author": "bajwa@adobe.com",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "availity-reactstrap-validation": "^1.4.3",
+    "bootstrap": "^4.0.0-beta.2",
+    "font-awesome": "^4.7.0",
+    "immutability-helper": "^2.6.4",
+    "jquery": "^3.2.1",
+    "popper.js": "^1.12.9",
+    "progress-tracker": "^1.4.0",
+    "react": "16.0.0",
+    "react-dom": "16.0.0",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.0.17",
+    "react-transition-group": "1.2.0",
+    "reactstrap": "^5.0.0-beta"
+  },
+  "homepage": "./",
+  "main": "src/electron-starter.js",
+  "scripts": {
+    "start": "nf start -p 3000",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "electron-start": "node src/electron-wait-react",
+    "react-start": "react-scripts start",
+    "pack": "build --dir",
+    "dist": "npm run build && build",
+    "postinstall": "install-app-deps"
+  },
+  "build": {
+    "appId": "com.electron.electron-with-create-react-app",
+    "win": {
+      "target": "portable"
+    },
+    "directories": {
+      "buildResources": "public"
+    },
+    "portable": {
+      "requestExecutionLevel": "admin"
+    },
+    "extraResources": [
+      "pyapi"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^1.7.9"
+  }
+}
