@@ -1,5 +1,5 @@
 # ust-configapp
-User Sync tool configuration wizard. It helps configure the User Sync tool for User Management API, Enterprise Directory and sync settings.
+This is User Sync tool configuration wizard. It helps configure the User Sync tool for User Management API (Adobe.io), Enterprise Directory (LDAP) and sync settings.
 
 ## Installation
 
@@ -24,4 +24,5 @@ yarn dist
 
 ## Note
 
-This application require nodeJS and Python
+Developement require [NodeJS](https://nodejs.org/en/) and [Python](https://www.python.org/). 
+Production require only [Python](https://www.python.org/). 
