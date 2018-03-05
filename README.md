@@ -26,3 +26,5 @@ yarn dist
 
 Developement require [NodeJS](https://nodejs.org/en/) and [Python](https://www.python.org/). 
 Production require only [Python](https://www.python.org/). 
+
+It use localhost port 14242 for internal communication.
