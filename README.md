@@ -10,13 +10,13 @@ Setup developement enviornment:
 
 Run in developement-mode:
 
-```yarn start```
-```python pyapi\app.py```
+```yarn start
+python pyapi\app.py```
 
 Build application for production:
 
-```yarn dist```
-```.\dist\ustapp 0.1.0.exe```
+```yarn dist
+.\dist\ustapp 0.1.0.exe```
 
 
 ## Note
