@@ -21,7 +21,7 @@
     "reactstrap": "^5.0.0-beta"
   },
   "homepage": "./",
-  "main": "src/electron-starter.js",
+  "main": "public/electron.js",
   "scripts": {
     "start": "nf start -p 3000",
     "build": "react-scripts build",
@@ -30,9 +30,9 @@
     "electron": "electron .",
     "electron-start": "node src/electron-wait-react",
     "react-start": "react-scripts start",
-    "pack": "build --dir",
-    "dist": "npm run build && build",
-    "postinstall": "install-app-deps"
+    "pack": "electron-builder build --dir",
+    "dist": "npm run build && electron-builder build",
+    "postinstall": "electron-builder install-app-deps"
   },
   "build": {
     "appId": "com.electron.electron-with-create-react-app",
@@ -50,6 +50,7 @@
     ]
   },
   "devDependencies": {
-    "electron": "^1.8.2"
+    "electron": "^1.8.2",
+    "electron-builder": "^20.3.1"
   }
 }
