@@ -6,6 +6,9 @@ This is User Sync tool configuration wizard. It helps configure the User Sync to
 Setup developement enviornment:
 
 ```
+npm install --global yarn
+npm install --global nf
+
 yarn install
 pip install -r pyapi\requirements.txt
 ```
