@@ -210,64 +210,6 @@ export default class extends Component {
     );
   }
 
-  getDefaultConfig(){
-    return {
-      "adobe_users": {
-        "connectors": {
-          "umapi_data": {
-            "enterprise": {
-              "api_key": "aa",
-              "client_secret": "aa",
-              "org_id": "aa",
-              "priv_key_path": "private.key",
-              "tech_acct": "aa"
-            }
-          }
-        },
-        "exclude_adobe_groups": null,
-        "exclude_identity_types": [
-          "adobeID"
-        ],
-        "exclude_users": null
-      },
-      "directory_users": {
-        "connectors": {
-          "ldap_data": {
-            "all_users_filter": "(&(objectClass=user)(objectCategory=person)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))",
-            "base_dn": "DC=adobeccetest,DC=com",
-            "group_filter_format": "(&(|(objectCategory=group)(objectClass=groupOfNames)(objectClass=posixGroup))(cn={group}))",
-            "group_member_attribute_name": "uniqueMember",
-            "host": "ldap://localhost",
-            "password": "aa",
-            "require_tls_cert": false,
-            "search_page_size": 0,
-            "user_email_format": "{mail}",
-            "username": "cn=Directory Manager"
-          }
-        },
-        "default_country_code": "US",
-        "groups": [
-          {
-            "adobe_groups": [
-              "Adobe Stock"
-            ],
-            "directory_group": "Directory Administrators"
-          }
-        ],
-        "user_identity_type": "federatedID"
-      },
-      "limits": {
-        "max_adobe_only_users": 200
-      },
-      "logging": {
-        "console_log_level": "info",
-        "file_log_directory": "logs",
-        "file_log_level": "debug",
-        "log_to_file": true
-      }
-    };
-  }
-
   processConfigDataFromServer(cd){
     return cd;
   }
@@ -297,7 +239,10 @@ export default class extends Component {
     fetch(g_remoteurl + "config?configfile="+ encodeURIComponent(configfile))
     .then(response => response.json())
     .then(data => {
-        if(data && data.Result){
+        if(data && data.ErrorMessage){
+          alert(data.ErrorMessage);
+        }  
+        else if(data && data.Result && !data.ErrorMessage){
             this.setState({ 
               configData: this.processConfigDataFromServer(data.Result),
               cancontinue: true
@@ -318,8 +263,11 @@ export default class extends Component {
     })
     .then(response => response.json())
     .then(data => {
-      console.log('Posted - ', data.Result);
-      if(callback){
+      if(data && data.ErrorMessage){
+        alert(data.ErrorMessage);
+      }
+      else if(data && !data.ErrorMessage && callback){
+        console.log('Posted - ', data.Result);
         callback();
       }
     });

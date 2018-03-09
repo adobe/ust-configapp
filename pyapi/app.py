@@ -1,4 +1,4 @@
-import json, sys, os
+import json, sys, os, six
 from flask import Flask, url_for, jsonify, request, make_response
 from flask_cors import CORS
 from ruamel.yaml import YAML
@@ -68,15 +68,18 @@ def do_load_config():
 
             try:
                 umapipathkey = d['adobe_users']['connectors']['umapi']
-                ldappathkey = d['directory_users']['connectors']['ldap']
-
-                umapipath = os.path.join(configdir, umapipathkey)
-                ldappath = os.path.join(configdir, ldappathkey)
-                
-                umapidict = loadyml(umapipath)
-                ldapdict = loadyml(ldappath)               
+                ldappathkey = d['directory_users']['connectors']['ldap']                 
             except KeyError:
-                pass
+                raise ValueError("No valid connector found.")
+
+            if not isinstance(umapipathkey, six.string_types):
+                umapipathkey = umapipathkey[0]
+
+            umapipath = os.path.join(configdir, umapipathkey)
+            ldappath = os.path.join(configdir, ldappathkey)
+            
+            umapidict = loadyml(umapipath)
+            ldapdict = loadyml(ldappath)               
             
             d['adobe_users']['connectors']['umapi_data'] = umapidict
             d['directory_users']['connectors']['ldap_data'] = ldapdict
