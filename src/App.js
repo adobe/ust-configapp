@@ -141,7 +141,7 @@ export default class extends Component {
     return (
       <div>
         <Navbar color="dark" className="navbar-dark" fixed="top">
-          <NavbarBrand href="/">
+          <NavbarBrand href="#">
             <i className="fa fa-refresh" aria-hidden="true"></i>
             <span style={{ marginLeft:10}}>User Sync Tool<small style={{ textTransform: "uppercase", color:"darkgray" }}>&nbsp;&nbsp;Configuration Wizard</small></span>
           </NavbarBrand>
