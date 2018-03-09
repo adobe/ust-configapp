@@ -25,33 +25,39 @@ def api_root():
 
 @app.route('/api/v1/config/', methods=['POST'])
 def do_save_config():
+    errMsg = None
     configfile = request.args.get('configfile')
-    connector = request.args.get('connector')
-    
+    connector = request.args.get('connector')    
     js = request.get_json()
-    if os.path.isfile(configfile):
-        try:
+    
+    try:
+        bRes = False
+        if os.path.isfile(configfile):
             if connector == "umapi":
                 cfile = js['ustapp']['umapifile']
-                saveyml(cfile, js['adobe_users']['connectors']['umapi_data'])
+                bRes = saveyml(cfile, js['adobe_users']['connectors']['umapi_data'])
             elif connector == "ldap":
                 cfile = js['ustapp']['ldapfile']
-                saveyml(cfile, js['directory_users']['connectors']['ldap_data'])
+                bRes = saveyml(cfile, js['directory_users']['connectors']['ldap_data'])
             elif connector == "ust":
                 cfile = configfile
-                saveyml(cfile, js)
-        except Exception as e:
-            print ("POST: Failed to process: "+ str(e)) 
-    return jsonify({"Result": True, "Message": None})
+                bRes = saveyml(cfile, js)
+        if(not bRes):
+            errMsg = "ERR1.1: Failed to process" + " - " + connector
+    except Exception as e:
+        errMsg = "ERR1:Failed to save" + " - " + str(e)
+        print (errMsg)
+
+    return jsonify({"Result": True, "ErrorMessage": errMsg})
     
 @app.route('/api/v1/config/', methods=['GET'])
 def do_load_config():
     configfile = request.args.get('configfile')
     d = {}
-    if os.path.isfile(configfile):
-        try:
+    errMsg = None
+    try:
+        if os.path.isfile(configfile):
             configdir = os.path.dirname(configfile)
-
             d = loadyml(configfile)
 
             umapidict = {}
@@ -61,11 +67,14 @@ def do_load_config():
             ldappath = ""
 
             try:
-                umapipath = d['adobe_users']['connectors']['umapi']
-                ldappath = d['directory_users']['connectors']['ldap']
+                umapipathkey = d['adobe_users']['connectors']['umapi']
+                ldappathkey = d['directory_users']['connectors']['ldap']
 
-                umapidict = loadyml(configdir + "\\" + umapipath)
-                ldapdict = loadyml(configdir + "\\" + ldappath)               
+                umapipath = os.path.join(configdir, umapipathkey)
+                ldappath = os.path.join(configdir, ldappathkey)
+                
+                umapidict = loadyml(umapipath)
+                ldapdict = loadyml(ldappath)               
             except KeyError:
                 pass
             
@@ -75,19 +84,21 @@ def do_load_config():
             d['ustapp'] = {}
             d['ustapp']['basedir'] = configdir
             d['ustapp']['basefile'] = configfile
-            d['ustapp']['umapifile'] = configdir + "\\" + umapipath
-            d['ustapp']['ldapfile'] = configdir + "\\" + ldappath
-        except Exception as e:
-            print ("GET: Failed to process: "+ str(e))
+            d['ustapp']['umapifile'] = umapipath
+            d['ustapp']['ldapfile'] = ldappath
+    except Exception as e:
+        d = {}
+        errMsg = "ERR2:Failed to load" + " - " + str(e)
+        print (errMsg)
                     
-    return jsonify({"Result": d, "Message": "Loaded " + configfile})
+    return jsonify({"Result": d, "ErrorMessage": errMsg})
 
 def loadyml(configfile):
     d = {}
     try:
         d = yaml.load(open(configfile))
     except:
-            print ("Failed to read config " + configfile)
+        print ("Failed to read config " + configfile)
     return d
 
 def saveyml(configfile, js):
