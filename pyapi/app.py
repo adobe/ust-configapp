@@ -63,17 +63,17 @@ def do_load_config():
             umapidict = {}
             ldapdict = {}
 
-            umapipath = ""
-            ldappath = ""
+            umapipathkey = None
+            ldappathkey = None
 
             try:
                 umapipathkey = d['adobe_users']['connectors']['umapi']
-                ldappathkey = d['directory_users']['connectors']['ldap']                 
+                ldappathkey = d['directory_users']['connectors']['ldap']
+
+                if not isinstance(umapipathkey, six.string_types):
+                    umapipathkey = umapipathkey[0]                 
             except KeyError:
                 raise ValueError("No valid connector found.")
-
-            if not isinstance(umapipathkey, six.string_types):
-                umapipathkey = umapipathkey[0]
 
             umapipath = os.path.join(configdir, umapipathkey)
             ldappath = os.path.join(configdir, ldappathkey)
