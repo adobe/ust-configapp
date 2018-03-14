@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['config-handler.py'],
-             pathex=['C:\\Users\\adorton\\projects\\ust-configapp\\config-handler'],
+             pathex=['.'],
              binaries=[],
              datas=[],
              hiddenimports=[],

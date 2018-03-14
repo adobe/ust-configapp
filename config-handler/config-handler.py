@@ -5,11 +5,13 @@ import os
 import six
 from ruamel.yaml import YAML
 
+
 def get_yaml_parser():
     yaml = YAML()
     yaml.preserve_quotes = True
     yaml.boolean_representation = ['False', 'True']
     return yaml
+
 
 def open_config_file(filename):
     if not filename:
@@ -27,12 +29,6 @@ def load_config(**kwargs):
     configdir = os.path.dirname(config_file)
     yaml = get_yaml_parser()
     d = yaml.load(open_config_file(config_file))
-
-    umapidict = {}
-    ldapdict = {}
-
-    umapipathkey = None
-    ldappathkey = None
 
     try:
         umapipathkey = d['adobe_users']['connectors']['umapi']
@@ -60,17 +56,19 @@ def load_config(**kwargs):
 
     return d
 
+
 def saveyml(d, js):
     for k in js:
         if k in d:
-          if type(js[k]) in [str, bool, int]:
-            d[k] = js[k]
-          elif type(js[k]) in [dict, list]:
-            for l in js[k]:
-                if l != 'connectors':
-                  if d[k][l] != js[k][l]:
-                    d[k][l] = js[k][l]
+            if type(js[k]) in [str, bool, int]:
+                d[k] = js[k]
+            elif type(js[k]) in [dict, list]:
+                for l in js[k]:
+                    if l != 'connectors':
+                        if d[k][l] != js[k][l]:
+                            d[k][l] = js[k][l]
     return d
+
 
 def save_config(**kwargs):
     config_file = kwargs['config_file']
@@ -96,6 +94,7 @@ def save_config(**kwargs):
 
     return saved_data
 
+
 def main(args):
     funcs = {
         'load': load_config,
@@ -116,6 +115,7 @@ def main(args):
     except Exception as e:
         sys.stderr.write("Error: {}".format(e))
         sys.exit(1)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Config handler for UST Config App')
