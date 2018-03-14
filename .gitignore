@@ -2,3 +2,7 @@
 /build/*
 /dist/*
 /node_modules/*
+config-handler/build
+config-handler/dist
+__pycache__
+*.swp
