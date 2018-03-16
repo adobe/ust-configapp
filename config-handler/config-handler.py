@@ -2,11 +2,14 @@ import argparse
 import sys
 import json
 import os
-import six
 from ruamel.yaml import YAML
 
 
 def get_yaml_parser():
+    """
+    Provide a consistent YAML parser to each function that needs one.
+    :return:
+    """
     yaml = YAML()
     yaml.preserve_quotes = True
     yaml.boolean_representation = ['False', 'True']
@@ -14,6 +17,11 @@ def get_yaml_parser():
 
 
 def open_config_file(filename):
+    """
+    Open file handler to config file with standardized error handling.
+    :param filename:
+    :return:
+    """
     if not filename:
         raise Exception('Config file path must be specified')
 
@@ -24,6 +32,15 @@ def open_config_file(filename):
 
 
 def load_config(**kwargs):
+    """
+    Load a config file.
+    Parameters are read from kwargs.  'config_file' must be provided.  Other arguments will be ignored.
+    :param kwargs:
+    :return:
+    """
+    if 'config_file' not in kwargs or not kwargs['config_file']:
+        raise AttributeError('No config file to load')
+
     config_file = kwargs['config_file']
 
     configdir = os.path.dirname(config_file)
@@ -34,7 +51,7 @@ def load_config(**kwargs):
         umapipathkey = d['adobe_users']['connectors']['umapi']
         ldappathkey = d['directory_users']['connectors']['ldap']
 
-        if not isinstance(umapipathkey, six.string_types):
+        if not isinstance(umapipathkey, str):
             umapipathkey = umapipathkey[0]
     except KeyError:
         raise ValueError("No valid connector found.")
@@ -57,7 +74,13 @@ def load_config(**kwargs):
     return d
 
 
-def saveyml(d, js):
+def update_config(d, js):
+    """
+    Update the contents of a config file.
+    :param d: Deserialized YAML data
+    :param js: Deserialized JSON data (from stdin)
+    :return:
+    """
     for k in js:
         if k in d:
             if type(js[k]) in [str, bool, int]:
@@ -71,6 +94,16 @@ def saveyml(d, js):
 
 
 def save_config(**kwargs):
+    """
+    Save a config file.
+    Parameters are provided in kwargs.
+        config_file: path to config file
+        connector: identifies which config file will be updates (ust, ldap, umapi)
+        input_data: deserialized json data from stdin
+    All other kwargs keys are ignored.
+    :param kwargs:
+    :return:
+    """
     config_file = kwargs['config_file']
     connector = kwargs['connector']
     input_data = kwargs['input']
@@ -81,15 +114,15 @@ def save_config(**kwargs):
     if os.path.isfile(config_file):
         if connector == "umapi":
             yaml_data = yaml.load(open_config_file(input_data['ustapp']['umapifile']))
-            saved_data = saveyml(yaml_data, input_data['adobe_users']['connectors']['umapi_data'])
+            saved_data = update_config(yaml_data, input_data['adobe_users']['connectors']['umapi_data'])
             yaml.dump(yaml_data, open(input_data['ustapp']['umapifile'], 'w'))
         elif connector == "ldap":
             yaml_data = yaml.load(open_config_file(input_data['ustapp']['ldapfile']))
-            saved_data = saveyml(yaml_data, input_data['directory_users']['connectors']['ldap_data'])
+            saved_data = update_config(yaml_data, input_data['directory_users']['connectors']['ldap_data'])
             yaml.dump(yaml_data, open(input_data['ustapp']['ldapfile'], 'w'))
         elif connector == "ust":
             yaml_data = yaml.load(open_config_file(config_file))
-            saved_data = saveyml(yaml_data, input_data)
+            saved_data = update_config(yaml_data, input_data)
             yaml.dump(yaml_data, open(config_file, 'w'))
 
     return saved_data
