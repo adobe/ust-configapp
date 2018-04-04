@@ -4,6 +4,7 @@
 /node_modules/*
 config-handler/build
 config-handler/dist
+config-handler/tests/fixture/config-handler*
 __pycache__
 *.swp
 .idea

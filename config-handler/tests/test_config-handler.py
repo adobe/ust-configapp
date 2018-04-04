@@ -101,6 +101,19 @@ def test_save_ldap_config(config_files, fixture_dir, config_handler):
     assert err == ''
 
 
+def test_save_ldap_config_add_obj(config_files, fixture_dir, config_handler):
+    fh = open(os.path.join(fixture_dir, 'save_ldap_add_obj.json'))
+    json_save_ldap = json.load(fh)
+    load_output, _ = run_config_handler(config_handler, ['load', '-c', config_files['ust']], '{}')
+    config_data = json.loads(load_output)
+    config_data['directory_users']['connectors']['ldap_data']['secure_password_key'] = "my_pw_key"
+    save_output, err = run_config_handler(config_handler, ['save', '-c',
+                                                           config_files['ldap'], '-o', 'ldap'], json.dumps(config_data))
+    json_save_test = json.loads(save_output)
+    assert json_save_ldap == json_save_test
+    assert err == ''
+
+
 def test_save_umapi_config(config_files, fixture_dir, config_handler):
     fh = open(os.path.join(fixture_dir, 'save_umapi.json'))
     json_save_umapi = json.load(fh)

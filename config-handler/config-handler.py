@@ -81,15 +81,29 @@ def update_config(d, js):
     :param js: Deserialized JSON data (from stdin)
     :return:
     """
-    for k in js:
-        if k in d:
-            if type(js[k]) in [str, bool, int]:
-                d[k] = js[k]
-            elif type(js[k]) in [dict, list]:
-                for l in js[k]:
-                    if l != 'connectors':
-                        if d[k][l] != js[k][l]:
-                            d[k][l] = js[k][l]
+    if isinstance(js, list):
+        js_iter = enumerate(js)
+    else:
+        js_iter = js.items()
+
+    for js_key, js_val in js_iter:
+        if js_key == 'ustapp' or js_key == 'connectors':
+            continue
+        if isinstance(d, list):
+            if js_key not in d:
+                d[js_key] = js_val
+                continue
+            yml_val = d[js_key]
+        else:
+            yml_val = d.get(js_key)
+            if not yml_val:
+                d[js_key] = js_val
+                continue
+        if type(js_val) in [str, bool, int, float]:
+            d[js_key] = js_val
+            continue
+        if type(js_val) in [dict, list]:
+            d[js_key] = update_config(yml_val, js_val)
     return d
 
 

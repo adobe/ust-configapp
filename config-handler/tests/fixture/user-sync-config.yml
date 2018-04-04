@@ -28,7 +28,7 @@ adobe_users:
   # Federated ID and Adobe ID users, so that they aren't inadvertently
   # removed because your directory doesn't contain them.]
   exclude_identity_types:
-  - adobeID
+    - adobeID
 
   # (optional) exclude_adobe_groups (no default value)
   # exclude_adobe_groups is a list of values, each of which is a string
@@ -151,6 +151,11 @@ directory_users:
     # [Uncomment the next line if you have a custom csv configuration file.]
     #csv: "connector-csv.yml"
 
+    # (optional) okta (no default value)
+    # okta is a 3rd party federation provider compatible with Adobe Enterprise Federated ID.
+    # See https://developer.okta.com/ for Okta developer information.
+    # okta: "connector-okta.ytml"
+
   # (optional) groups (no default value)
   # The groups setting specifies how groups in the enterprise directory map
   # to product configurations and user groups on the Adobe side (collectively
@@ -170,16 +175,16 @@ directory_users:
     # the "Copy Editors" user group has been assigned access to appropriate
     # Adobe products, such as InDesign and InCopy.)
     # [You will need to edit or remove these examples.]
-  - directory_group: "Finance"
-    adobe_groups:
-      # the finance group doesn't use any Adobe products
-  - directory_group: "Administration"
-    adobe_groups:
-    - "Acrobat DC Pro"
-  - directory_group: "Newsletter"
-    adobe_groups:
-    - "Copy Editors"
-    - "Acrobat DC Pro"
+    - directory_group: "Finance"
+      adobe_groups:
+        # the finance group doesn't use any Adobe products
+    - directory_group: "Administration"
+      adobe_groups:
+        - "Acrobat DC Pro"
+    - directory_group: "Newsletter"
+      adobe_groups:
+        - "Copy Editors"
+        - "Acrobat DC Pro"
 
 # The limits section provides processing limits which can help ensure that
 # User Sync jobs do not exceed expected guardrails in their operation
