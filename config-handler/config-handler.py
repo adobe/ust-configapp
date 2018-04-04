@@ -173,7 +173,7 @@ if __name__ == '__main__':
                         metavar='filename', dest='config_filename')
     parser.add_argument('-o', '--connector',
                         help='connector type (used in config update)',
-                        metavar='filename', dest='connector_type')
+                        metavar='ust|umapi|ldap', dest='connector_type')
 
     args = parser.parse_args()
     main(args)
