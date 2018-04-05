@@ -1,5 +1,0 @@
-Flask==0.12.2
-Flask_Cors==3.0.3
-ruamel.base==1.0.0
-ruamel.yaml
-
