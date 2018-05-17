@@ -2,3 +2,11 @@
 /build/*
 /dist/*
 /node_modules/*
+config-handler/build
+config-handler/dist
+config-handler/tests/fixture/config-handler*
+.pytest_cache
+__pycache__
+*.swp
+.idea
+.cache

@@ -46,7 +46,7 @@
       "requestExecutionLevel": "admin"
     },
     "extraResources": [
-      "pyapi"
+      "config-handler/dist"
     ]
   },
   "devDependencies": {

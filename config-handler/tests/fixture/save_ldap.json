@@ -1,0 +1,12 @@
+{
+  "username": "user@example.com",
+  "password": "LDAP password goes here",
+  "host": "LDAP host URL goes here.  e.g. ldap://ldap.example.com",
+  "base_dn": "defines the base DN. e.g. DC=example,DC=com",
+  "search_page_size": 200,
+  "require_tls_cert": false,
+  "all_users_filter": "(&(objectClass=user)(objectCategory=person)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))",
+  "group_filter_format": "(&(|(objectCategory=group)(objectClass=groupOfNames)(objectClass=posixGroup))(cn={group}))",
+  "group_member_filter_format": "(memberOf={group_dn})",
+  "user_email_format": "{mail}"
+}

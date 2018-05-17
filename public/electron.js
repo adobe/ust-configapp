@@ -6,31 +6,28 @@ const BrowserWindow = electron.BrowserWindow
 
 const path = require('path')
 const url = require('url')
+const os = require('os')
 const child_process = require('child_process')
 
 /*************************************************************
  * py process
  *************************************************************/
-let pyProc = null
-const createPyProc = () => {
-  const script = path.join(app.getAppPath(), '../pyapi', 'app' + '.py');
-
-  //Alternative: child_process.exec('python '+script, (err) =>{ console.log(err); });
-  pyProc = child_process.spawn('python', [script])
-  
-  if (pyProc != null) {
-    console.log(pyProc.pid)
-    console.log('child process success on port ' + script)
-  }
+let configHandlerPath;
+// is process.defaultApp is false or undefined, then we are in the build.  otherwise, we're in dev mode
+// and the app path is a bit different
+if (!process.defaultApp) {
+  configHandlerPath = path.join(path.dirname(app.getAppPath()), 'config-handler', 'dist');
+} else {
+  configHandlerPath = path.join(app.getAppPath(), 'config-handler', 'dist');
 }
 
-const exitPyProc = () => {
-  pyProc.kill()
-  pyProc = null
+if (os.platform() == 'win32') {
+  configHandlerPath = path.join(configHandlerPath, 'config-handler.exe');
+} else {
+  configHandlerPath = path.join(configHandlerPath, 'config-handler');
 }
 
-app.on('ready', createPyProc)
-app.on('will-quit', exitPyProc)
+global.configHandlerPath = configHandlerPath;
 
 /*************************************************************
  * electron process
