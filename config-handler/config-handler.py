@@ -4,6 +4,29 @@ import json
 import os
 from ruamel.yaml import YAML
 
+primitive = (str, bool, int, float)
+
+
+def is_primitive(thing):
+    """
+    Checks if the thing is primitive type
+    :param thing:
+    :return:
+    """
+    return isinstance(thing, primitive)
+
+
+def is_primitive_list(thing):
+    """
+    Checks if the thing is primitive list
+    :param thing:
+    :return:
+    """
+    isprim = False
+    if isinstance(thing, list):
+        isprim = all(is_primitive(thing[k]) for k, v in enumerate(thing))
+    return isprim
+
 
 def get_yaml_parser():
     """
@@ -13,6 +36,7 @@ def get_yaml_parser():
     yaml = YAML()
     yaml.preserve_quotes = True
     yaml.boolean_representation = ['False', 'True']
+    yaml.indent(sequence=4, offset=2)
     return yaml
 
 
@@ -65,6 +89,14 @@ def load_config(**kwargs):
     d['adobe_users']['connectors']['umapi_data'] = umapidict
     d['directory_users']['connectors']['ldap_data'] = ldapdict
 
+    # process empty adobe user group mappings
+    # (replace None for empty item mapping) to help round-trip save
+    grps_list = d['directory_users']['groups']
+    for i, e in enumerate(grps_list):
+        if e["adobe_groups"] is None:
+            e["adobe_groups"] = [""]
+    d['directory_users']['groups'] = grps_list
+
     d['ustapp'] = {}
     d['ustapp']['basedir'] = configdir
     d['ustapp']['basefile'] = config_file
@@ -81,30 +113,31 @@ def update_config(d, js):
     :param js: Deserialized JSON data (from stdin)
     :return:
     """
+    js_iter = None
     if isinstance(js, list):
         js_iter = enumerate(js)
-    else:
+    elif isinstance(js, dict):
         js_iter = js.items()
 
     for js_key, js_val in js_iter:
-        if js_key == 'ustapp' or js_key == 'connectors':
+        if js_key == 'ustapp' or js_key == 'connectors' or js_val is None:
             continue
-        if isinstance(d, list):
-            if js_key not in d:
-                d[js_key] = js_val
-                continue
-            yml_val = d[js_key]
+
+        if js_key == 'groups':
+            # Update whole obj list, will remove list-item level comments or any commented mappings
+            d[js_key].clear()
+            for js_obj in js_val:
+                d[js_key].append(js_obj)
+            # print(d[js_key])
         else:
-            yml_val = d.get(js_key)
-            if not yml_val:
+            if js_key in d:
+                if is_primitive(js_val) or is_primitive_list(js_val):
+                    d[js_key] = js_val
+                else:
+                    update_config(d[js_key], js_val)
+            else:
                 d[js_key] = js_val
-                continue
-        if type(js_val) in [str, bool, int, float]:
-            d[js_key] = js_val
-            continue
-        if type(js_val) in [dict, list]:
-            d[js_key] = update_config(yml_val, js_val)
-    return d
+    return
 
 
 def save_config(**kwargs):
@@ -122,23 +155,39 @@ def save_config(**kwargs):
     connector = kwargs['connector']
     input_data = kwargs['input']
 
-    yaml = get_yaml_parser()
-    
     saved_data = {}
-    if os.path.isfile(config_file):
-        if connector == "umapi":
-            yaml_data = yaml.load(open_config_file(input_data['ustapp']['umapifile']))
-            saved_data = update_config(yaml_data, input_data['adobe_users']['connectors']['umapi_data'])
-            yaml.dump(yaml_data, open(input_data['ustapp']['umapifile'], 'w'))
-        elif connector == "ldap":
-            yaml_data = yaml.load(open_config_file(input_data['ustapp']['ldapfile']))
-            saved_data = update_config(yaml_data, input_data['directory_users']['connectors']['ldap_data'])
-            yaml.dump(yaml_data, open(input_data['ustapp']['ldapfile'], 'w'))
-        elif connector == "ust":
-            yaml_data = yaml.load(open_config_file(config_file))
-            saved_data = update_config(yaml_data, input_data)
-            yaml.dump(yaml_data, open(config_file, 'w'))
+    if connector not in ("umapi", "ldap", "ust"):
+        saved_data = {"Result": "Error"}
+        return saved_data
 
+    # process empty adobe user group mappings
+    # (replace empty item for None mapping) to help round-trip save
+    grps_list = input_data['directory_users']['groups']
+    for i, e in enumerate(grps_list):
+        if all(k == "" for k in e["adobe_groups"]):
+            e["adobe_groups"] = None
+    input_data['directory_users']['groups'] = grps_list
+
+    if os.path.isfile(config_file):
+        a_config_file = None
+        a_input_data = None
+
+        if connector == "umapi":
+            a_config_file = input_data['ustapp']['umapifile']
+            a_input_data = input_data['adobe_users']['connectors']['umapi_data']
+        elif connector == "ldap":
+            a_config_file = input_data['ustapp']['ldapfile']
+            a_input_data = input_data['directory_users']['connectors']['ldap_data']
+        elif connector == "ust":
+            a_config_file = config_file
+            a_input_data = input_data
+
+        yaml = get_yaml_parser()
+        yaml_data = yaml.load(open_config_file(a_config_file))
+        update_config(yaml_data, a_input_data)
+        yaml.dump(yaml_data, open(a_config_file, 'w'))
+
+        saved_data = {"Result": "OK"}
     return saved_data
 
 

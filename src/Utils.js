@@ -10,3 +10,7 @@ export function setobj(obj, path, value) {
 
     schema[pList[len-1]] = value;
 }
+
+export function openexternal(url){
+    window.require('child_process').execSync('start '+ url)
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 import update from 'immutability-helper';
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, InputGroup, InputGroupButton, Button, Form, FormGroup, Label, Input, FormText, ListGroup, ListGroupItem, ListGroupItemHeading, ListGroupItemText, Alert } from 'reactstrap';
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, Form, FormGroup, Label, Input, ListGroup, ListGroupItem } from 'reactstrap';
 import * as Utils from './Utils';
 
 export default class extends React.Component {
@@ -64,6 +64,15 @@ export default class extends React.Component {
         else if(eltype === "input"){
             const val = e.target.value;
             Utils.setobj(cd, elname, val);
+        }
+        else if(eltype === "inputlist"){
+            let val = e.target.value;
+            if(val){
+                const valarr = val.split("\n");
+                if(valarr.length > 0){
+                    Utils.setobj(cd, elname, valarr);
+                }
+            }
         }
 
         this.setState({});
@@ -257,7 +266,7 @@ export default class extends React.Component {
                             <option>info</option>
                             <option>debug</option>
                         </Input>
-                        <Label check size="sm">
+                        <Label check size="sm" style={{marginLeft:20}}>
                             <Input type="checkbox" checked={cd.logging.log_to_file} onChange={this.handleChange('logging.log_to_file', 'check')}  />{' '}
                             Enable Logging
                         </Label>
@@ -266,16 +275,12 @@ export default class extends React.Component {
                 <div className="row form-group">
                     <FormGroup className="col-sm-6">
                         <Label>Exclude Adobe-side identity type</Label>
-                        <Input type="select" value={cd.adobe_users.exclude_identity_types[0]} onChange={this.handleChange('adobe_users.exclude_identity_types.0')} size="sm">
-                            <option>adobeID</option>
-                            <option>enterpriseID</option>
-                            <option>federatedID</option>
-                        </Input>    
+                        <Input type="textarea" defaultValue={cd.adobe_users.exclude_identity_types} onChange={this.handleChange('adobe_users.exclude_identity_types', 'inputlist')} placeholder="adobeID" size="sm" />
                     </FormGroup>
-                    { /*<FormGroup className="col-sm-6">
-                        <Label>Exclude Adobe-side Users</Label>
-                        <Input type="textarea" value={cd.adobe_users.exclude_users} onChange={this.handleChange('adobe_users.exclude_users')} placeholder=".*@special.com&#10;freelancer-[0-9]+.*" size="sm" />
-                        </FormGroup> */}
+                    <FormGroup className="col-sm-6">
+                        <Label>Exclude Adobe-side Users Groups</Label>
+                        <Input type="textarea" defaultValue={cd.adobe_users.exclude_adobe_groups} onChange={this.handleChange('adobe_users.exclude_adobe_groups', 'inputlist')} placeholder="Adobe-Group1&#10;Adobe-Group2" size="sm" />
+                    </FormGroup>
                 </div>
             </Form>
         );

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Container, Row, Col, InputGroup, InputGroupButton, Button, Form, FormGroup, Label, Input, FormText, ListGroup, ListGroupItem, ListGroupItemHeading, ListGroupItemText } from 'reactstrap';
+import { Container, Row, Col, Input } from 'reactstrap';
 import FileView from './FileView';
+import {openexternal} from './Utils';
 
 export default class extends React.Component {
     constructor() {
@@ -50,19 +51,20 @@ export default class extends React.Component {
         return (
             <div>
                 { !this.state.configview ? 
-                    <Container fluid={true} style={{marginTop: 20, marginLeft:-15}}>                  
+                    <Container fluid={true} style={{marginTop: 20, padding:0}}>                  
                         <Row>
                             <Col sm={12}>
                                 <div>
                                     <h5>Welcome to User Sync Configuration Wizard</h5>
                                     <hr />
-                                    <p>1. Setup <b>User Management API</b> Integration from Adobe.io
-                                    <br />2. Configure the <b>Enterprise Directory</b> service account
-                                    <br />3. Define the <b>User Identity Type & User Groups Mappings</b> for User Sync
-                                    </p>
-                                    <p className="mb-0">Go to <i>https://github.com/adobe-apiplatform/user-sync.py</i> for more information</p>
-                                    <p>&nbsp;</p>
                                     <legend style={{marginLeft:-10}} >Before you continue</legend>
+                                    <ol className="rounded-list" style={{paddingLeft: 15}}>
+                                        <li><a href="#" onClick={()=> openexternal('https://console.adobe.io')}>Get User Management API token from <span style={{color:'blue'}}>Adobe.io</span></a></li>
+                                        <li><a href="#">Configure the Enterprise Directory (readonly LDAP) service account </a></li>
+                                        <li><a href="#">Define the User Identity Type & User Groups Mappings for User Sync</a></li>
+                                    </ol>
+                                    <p className="mb-0">Go to <a  href="#" onClick={()=> openexternal('https://github.com/adobe-apiplatform/user-sync.py')}>GitHub</a> for more information</p>
+                                    <br/>
                                     <p>
                                         { 
                                             !configloaded ? 

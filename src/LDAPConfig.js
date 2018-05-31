@@ -1,5 +1,5 @@
 import React from 'react';
-import { UncontrolledDropdown, InputGroupButtonDropdown, DropdownMenu, DropdownToggle, InputGroup, DropdownItem, InputGroupAddon, InputGroupButton, Button, Form, FormGroup, Label, Input, FormText, ListGroup, ListGroupItem, ListGroupItemHeading, ListGroupItemText, Alert, UncontrolledTooltip } from 'reactstrap';
+import { UncontrolledDropdown, DropdownMenu, DropdownToggle, InputGroup, DropdownItem, Form, FormGroup, Label, Input } from 'reactstrap';
 import * as Utils from './Utils';
 
 const g_allUsersFilterOptions = {
@@ -97,10 +97,17 @@ export default class extends React.Component {
                         <Label>Username</Label>
                         <Input type="text" value={ldap.username} onChange={this.handleChange('username')} placeholder="Enter Username" size="sm" />
                     </FormGroup>
-                    <FormGroup className="col-sm-6">
-                        <Label>Password</Label>
-                        <Input type="password" value={ldap.password} onChange={this.handleChange('password')} placeholder="Enter Password" size="sm" />
-                    </FormGroup>
+                    { 
+                        ldap.secure_password_key ?
+                            <FormGroup className="col-sm-6">
+                                <Label>Secure Password Key</Label>
+                                <Input readOnly={false} type="text" value={ldap.secure_password_key} onChange={this.handleChange('secure_password_key')} placeholder="Enter Secure Pass. Key" size="sm" />
+                            </FormGroup> : 
+                            <FormGroup className="col-sm-6">
+                                <Label>Password</Label>
+                                <Input type="password" value={ldap.password} onChange={this.handleChange('password')} placeholder="Enter Password" size="sm" />
+                            </FormGroup>
+                    }
                     <FormGroup className="col-sm-6">
                         <Label>Host</Label>
                         <Input type="text" value={ldap.host} onChange={this.handleChange('host')} placeholder="Enter Host" size="sm" />
@@ -118,7 +125,7 @@ export default class extends React.Component {
                         <Label>You can use <i>userPrincipalName</i> as user identifier but it should represent a live email address</Label>
                     </FormGroup>
                     <FormGroup className="col-md-12">
-                        <Label>LDAP Filter - keep variables {'{'+ 'group'+ '}'} and {'{'+ 'group_dn'+ '}'} </Label>
+                        <Label>LDAP Filter - keep variables {"{group}"} and {"{group_dn}"} </Label>
                         <InputGroup>
                             <UncontrolledDropdown addonType="prepend"> 
                                 <DropdownToggle size="sm" split outline style={{width:135, borderRadius:0, borderColor:"lightgray", borderRight:0}} >
