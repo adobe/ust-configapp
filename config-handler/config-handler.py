@@ -2,6 +2,7 @@ import argparse
 import sys
 import json
 import os
+from shutil import copyfile
 from ruamel.yaml import YAML
 
 primitive = (str, bool, int, float)
@@ -181,6 +182,10 @@ def save_config(**kwargs):
         elif connector == "ust":
             a_config_file = config_file
             a_input_data = input_data
+
+        a_bak_config_file = os.path.join(os.path.dirname(a_config_file), "_" + os.path.basename(a_config_file) + ".bak")
+        if not os.path.exists(a_bak_config_file):
+            copyfile(a_config_file, a_bak_config_file)
 
         yaml = get_yaml_parser()
         yaml_data = yaml.load(open_config_file(a_config_file))
