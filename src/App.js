@@ -7,6 +7,7 @@ import USTConfig from './USTConfig';
 import UMAPIConfig from './UMAPIConfig';
 import LDAPConfig from './LDAPConfig';
 import Summary from './Summary';
+import {openexternal} from './Utils';
 const remote = window.require('electron').remote;
 const { spawn } = window.require('child_process');
 
@@ -189,6 +190,10 @@ export default class extends Component {
             <Col sm={3} style={{padding:10, paddingRight: 15}}>
               <div style={{ marginTop:95}}>
                 <span>{s.helpstring}</span>
+              </div>
+              <br/>
+              <div>
+                <span>Go to <a  href="#" onClick={()=> openexternal('https://adobe-apiplatform.github.io/user-sync.py/en/')}>GitHub</a> for more information</span>
               </div>
             </Col>
           </Row>
