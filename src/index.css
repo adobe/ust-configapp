@@ -139,7 +139,7 @@ ol {
   list-style: none; /* Remove default numbering */
   *list-style: decimal; /* Keep using default numbering for IE6/7 */
   padding: 0;
-  margin-bottom: 0.5em;
+  margin-bottom: 1em;
   text-shadow: 0 1px 0 rgba(255,255,255,.5);
 }
 

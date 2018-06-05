@@ -56,25 +56,22 @@ export default class extends React.Component {
                             <Col sm={12}>
                                 <div>
                                     <h5>Welcome to User Sync Configuration Wizard</h5>
-                                    <hr />
-                                    <legend style={{marginLeft:-10}} >Before you continue</legend>
+                                    <hr/>
+                                    <legend style={{marginLeft:-10}} >Before you continue <small>check following are available</small></legend>
                                     <ol className="rounded-list" style={{paddingLeft: 15}}>
                                         <li><a href="#" onClick={()=> openexternal('https://console.adobe.io')}>Get User Management API token from <span style={{color:'blue'}}>Adobe.io</span></a></li>
                                         <li><a href="#">Configure the Enterprise Directory (readonly LDAP) service account </a></li>
                                         <li><a href="#">Define the User Identity Type & User Groups Mappings for User Sync</a></li>
                                     </ol>
-                                    <p className="mb-0">Go to <a  href="#" onClick={()=> openexternal('https://github.com/adobe-apiplatform/user-sync.py')}>GitHub</a> for more information</p>
-                                    <br/>
+                                    <legend style={{marginLeft:-10}}>Configuration File <small>select user-sync-config.yml</small></legend>
                                     <p>
                                         { 
                                             !configloaded ? 
                                             <div>
-                                                <span>Select path to User Sync tool's configuration file (user-sync-config.yml)</span>
                                                 <Input type="file" size="sm" defaultValue="" onChange={this.handleChange('fi_ust_conf_path')} accept=".yml" />
                                             </div> : 
                                             <div>
-                                                <span>User Sync tool's configuration file (user-sync-config.yml)</span>
-                                                <br/><span>{ap.fi_ust_conf_path}</span>&nbsp;<a onClick={this.onConfigView} href="#">View</a>
+                                                <span>{ap.fi_ust_conf_path}</span>&nbsp;<a onClick={this.onConfigView} href="#">View</a>
                                             </div>
                                         }
                                     </p>
@@ -89,6 +86,6 @@ export default class extends React.Component {
     }
 
     componentDidMount() {
-        this.showHelp("Configure the User Sync tool for synchronizing Adobe customer directories via the User Management API");
+        this.showHelp("This wizard helps you configure the Adobe.io token, enterprise directory information and directory group mappings. Please select the user sync configuration file (user-sync-config.yml) to continue.");
     }
 }
