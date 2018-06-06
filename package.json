@@ -31,7 +31,7 @@
     "electron-start": "node src/electron-wait-react",
     "react-start": "react-scripts start",
     "pack": "electron-builder build --dir",
-    "dist": "npm run build && electron-builder build",
+    "dist": "set CSC_KEY_PASSWORD=AdobeUK&&set CSC_LINK=%cd%/cert/codecert.pfx && npm run build && electron-builder build",
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {
