@@ -10,6 +10,7 @@
     "font-awesome": "^4.7.0",
     "immutability-helper": "^2.6.4",
     "jquery": "^3.2.1",
+    "js-yaml": "^3.12.0",
     "popper.js": "^1.12.9",
     "progress-tracker": "^1.4.0",
     "react": "16.0.0",
@@ -31,7 +32,7 @@
     "electron-start": "node src/electron-wait-react",
     "react-start": "react-scripts start",
     "pack": "electron-builder build --dir",
-    "dist": "set CSC_KEY_PASSWORD=AdobeUK&&set CSC_LINK=%cd%/cert/codecert.pfx && npm run build && electron-builder build",
+    "dist": "npm run build && electron-builder build",
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {
@@ -50,8 +51,8 @@
     ]
   },
   "devDependencies": {
-    "electron": "^1.8.2",
-    "electron-builder": "^20.3.1",
-	"foreman": "^2.0.0"
+    "electron": "^2.0.2",
+    "electron-builder": "^20.15.1",
+    "foreman": "^2.0.0"
   }
 }

@@ -146,7 +146,7 @@ export default class extends React.Component {
                     <FormGroup className="col-sm-6 form-group">
                         <Label>Default Country-code</Label>
                         <Input type="select" value={cd.directory_users.default_country_code} onChange={this.handleChange('directory_users.default_country_code')} size="sm">
-                            {ap.countries.map(c => <option value={c.Code}>{c.Name}</option>)}
+                            {ap.countries.map( (c, idx) => <option key={idx} value={c.Code}>{c.Name}</option>)}
                         </Input>                        
                     </FormGroup>
                 </div>

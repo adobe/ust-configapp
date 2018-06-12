@@ -1,5 +1,6 @@
 import React from 'react';
 import { Container, Row, Col } from 'reactstrap';
+const spawn = window.require('child_process').spawn; 
 
 export default class extends React.Component {
     constructor() {
@@ -19,6 +20,10 @@ export default class extends React.Component {
         }
     }
 
+    launchExe = () => {
+        spawn('start', ['C:\\Windows\\System32\\notepad.exe'], {detached: true});
+    }
+
     render() {
         // const ap = this.props.appData;
         return (
@@ -36,12 +41,12 @@ export default class extends React.Component {
                                         <li><a href="#">Setup a <i>scheduled task</i> for ongoing execution of User Sync</a></li>
                                     </ol>
                                     <legend style={{marginLeft:-10}} >Run in test-mode</legend>
-                                    <p>
+                                    <div>
                                         Runing in test-mode only compare users in Admin Console and does not apply the changes.
                                         <pre>
                                             python ./user-sync.pex --process-groups --users mapped --test-mode
-                                        </pre>                                        
-                                    </p>
+                                        </pre>
+                                    </div>
                                 </div>
                             </Col>
                         </Row>                

@@ -10,26 +10,6 @@ const os = require('os')
 const child_process = require('child_process')
 
 /*************************************************************
- * py process
- *************************************************************/
-let configHandlerPath;
-// is process.defaultApp is false or undefined, then we are in the build.  otherwise, we're in dev mode
-// and the app path is a bit different
-if (!process.defaultApp) {
-  configHandlerPath = path.join(path.dirname(app.getAppPath()), 'config-handler', 'dist');
-} else {
-  configHandlerPath = path.join(app.getAppPath(), 'config-handler', 'dist');
-}
-
-if (os.platform() == 'win32') {
-  configHandlerPath = path.join(configHandlerPath, 'config-handler.exe');
-} else {
-  configHandlerPath = path.join(configHandlerPath, 'config-handler');
-}
-
-global.configHandlerPath = configHandlerPath;
-
-/*************************************************************
  * electron process
  *************************************************************/
 
