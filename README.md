@@ -9,12 +9,7 @@ Setup developement enviornment:
 npm install --global yarn
 
 yarn install
-pip install -r pyapi\requirements.txt
 ```
-
-Before running the app in development mode or building it for distribution, the `config-handler` app must be built. See the 
-[config-handler documentation](config-handler/README.md) for build instructions.
-
 Run in developement-mode:
 
 ```
@@ -29,4 +24,4 @@ yarn dist
 
 ## Note
 
-Developement require [NodeJS](https://nodejs.org/en/).  [Python](https://www.python.org/) is required to build the `config-handler` component.
+Developement require [NodeJS](https://nodejs.org/en/).
