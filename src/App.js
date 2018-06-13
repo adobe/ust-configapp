@@ -7,33 +7,48 @@ import USTConfig from './USTConfig';
 import UMAPIConfig from './UMAPIConfig';
 import LDAPConfig from './LDAPConfig';
 import Summary from './Summary';
-import {openexternal} from './Utils';
+import { openexternal } from './Utils';
 const yaml = window.require('js-yaml');
 const fs = window.require('fs');
 const path = window.require('path');
 
-const g_countries = [{"Code": "AF", "Name": "Afghanistan"},{"Code": "AX", "Name": "\u00c5land Islands"},{"Code": "AL", "Name": "Albania"},{"Code": "DZ", "Name": "Algeria"},{"Code": "AS", "Name": "American Samoa"},{"Code": "AD", "Name": "Andorra"},{"Code": "AO", "Name": "Angola"},{"Code": "AI", "Name": "Anguilla"},{"Code": "AQ", "Name": "Antarctica"},{"Code": "AG", "Name": "Antigua and Barbuda"},{"Code": "AR", "Name": "Argentina"},{"Code": "AM", "Name": "Armenia"},{"Code": "AW", "Name": "Aruba"},{"Code": "AU", "Name": "Australia"},{"Code": "AT", "Name": "Austria"},{"Code": "AZ", "Name": "Azerbaijan"},{"Code": "BS", "Name": "Bahamas"},{"Code": "BH", "Name": "Bahrain"},{"Code": "BD", "Name": "Bangladesh"},{"Code": "BB", "Name": "Barbados"},{"Code": "BY", "Name": "Belarus"},{"Code": "BE", "Name": "Belgium"},{"Code": "BZ", "Name": "Belize"},{"Code": "BJ", "Name": "Benin"},{"Code": "BM", "Name": "Bermuda"},{"Code": "BT", "Name": "Bhutan"},{"Code": "BO", "Name": "Bolivia, Plurinational State of"},{"Code": "BQ", "Name": "Bonaire, Sint Eustatius and Saba"},{"Code": "BA", "Name": "Bosnia and Herzegovina"},{"Code": "BW", "Name": "Botswana"},{"Code": "BV", "Name": "Bouvet Island"},{"Code": "BR", "Name": "Brazil"},{"Code": "IO", "Name": "British Indian Ocean Territory"},{"Code": "BN", "Name": "Brunei Darussalam"},{"Code": "BG", "Name": "Bulgaria"},{"Code": "BF", "Name": "Burkina Faso"},{"Code": "BI", "Name": "Burundi"},{"Code": "KH", "Name": "Cambodia"},{"Code": "CM", "Name": "Cameroon"},{"Code": "CA", "Name": "Canada"},{"Code": "CV", "Name": "Cape Verde"},{"Code": "KY", "Name": "Cayman Islands"},{"Code": "CF", "Name": "Central African Republic"},{"Code": "TD", "Name": "Chad"},{"Code": "CL", "Name": "Chile"},{"Code": "CN", "Name": "China"},{"Code": "CX", "Name": "Christmas Island"},{"Code": "CC", "Name": "Cocos (Keeling) Islands"},{"Code": "CO", "Name": "Colombia"},{"Code": "KM", "Name": "Comoros"},{"Code": "CG", "Name": "Congo"},{"Code": "CD", "Name": "Congo, the Democratic Republic of the"},{"Code": "CK", "Name": "Cook Islands"},{"Code": "CR", "Name": "Costa Rica"},{"Code": "CI", "Name": "C\u00f4te d'Ivoire"},{"Code": "HR", "Name": "Croatia"},{"Code": "CU", "Name": "Cuba"},{"Code": "CW", "Name": "Cura\u00e7ao"},{"Code": "CY", "Name": "Cyprus"},{"Code": "CZ", "Name": "Czech Republic"},{"Code": "DK", "Name": "Denmark"},{"Code": "DJ", "Name": "Djibouti"},{"Code": "DM", "Name": "Dominica"},{"Code": "DO", "Name": "Dominican Republic"},{"Code": "EC", "Name": "Ecuador"},{"Code": "EG", "Name": "Egypt"},{"Code": "SV", "Name": "El Salvador"},{"Code": "GQ", "Name": "Equatorial Guinea"},{"Code": "ER", "Name": "Eritrea"},{"Code": "EE", "Name": "Estonia"},{"Code": "ET", "Name": "Ethiopia"},{"Code": "FK", "Name": "Falkland Islands (Malvinas)"},{"Code": "FO", "Name": "Faroe Islands"},{"Code": "FJ", "Name": "Fiji"},{"Code": "FI", "Name": "Finland"},{"Code": "FR", "Name": "France"},{"Code": "GF", "Name": "French Guiana"},{"Code": "PF", "Name": "French Polynesia"},{"Code": "TF", "Name": "French Southern Territories"},{"Code": "GA", "Name": "Gabon"},{"Code": "GM", "Name": "Gambia"},{"Code": "GE", "Name": "Georgia"},{"Code": "DE", "Name": "Germany"},{"Code": "GH", "Name": "Ghana"},{"Code": "GI", "Name": "Gibraltar"},{"Code": "GR", "Name": "Greece"},{"Code": "GL", "Name": "Greenland"},{"Code": "GD", "Name": "Grenada"},{"Code": "GP", "Name": "Guadeloupe"},{"Code": "GU", "Name": "Guam"},{"Code": "GT", "Name": "Guatemala"},{"Code": "GG", "Name": "Guernsey"},{"Code": "GN", "Name": "Guinea"},{"Code": "GW", "Name": "Guinea-Bissau"},{"Code": "GY", "Name": "Guyana"},{"Code": "HT", "Name": "Haiti"},{"Code": "HM", "Name": "Heard Island and McDonald Islands"},{"Code": "VA", "Name": "Holy See (Vatican City State)"},{"Code": "HN", "Name": "Honduras"},{"Code": "HK", "Name": "Hong Kong"},{"Code": "HU", "Name": "Hungary"},{"Code": "IS", "Name": "Iceland"},{"Code": "IN", "Name": "India"},{"Code": "ID", "Name": "Indonesia"},{"Code": "IR", "Name": "Iran, Islamic Republic of"},{"Code": "IQ", "Name": "Iraq"},{"Code": "IE", "Name": "Ireland"},{"Code": "IM", "Name": "Isle of Man"},{"Code": "IL", "Name": "Israel"},{"Code": "IT", "Name": "Italy"},{"Code": "JM", "Name": "Jamaica"},{"Code": "JP", "Name": "Japan"},{"Code": "JE", "Name": "Jersey"},{"Code": "JO", "Name": "Jordan"},{"Code": "KZ", "Name": "Kazakhstan"},{"Code": "KE", "Name": "Kenya"},{"Code": "KI", "Name": "Kiribati"},{"Code": "KP", "Name": "Korea, Democratic People's Republic of"},{"Code": "KR", "Name": "Korea, Republic of"},{"Code": "KW", "Name": "Kuwait"},{"Code": "KG", "Name": "Kyrgyzstan"},{"Code": "LA", "Name": "Lao People's Democratic Republic"},{"Code": "LV", "Name": "Latvia"},{"Code": "LB", "Name": "Lebanon"},{"Code": "LS", "Name": "Lesotho"},{"Code": "LR", "Name": "Liberia"},{"Code": "LY", "Name": "Libya"},{"Code": "LI", "Name": "Liechtenstein"},{"Code": "LT", "Name": "Lithuania"},{"Code": "LU", "Name": "Luxembourg"},{"Code": "MO", "Name": "Macao"},{"Code": "MK", "Name": "Macedonia, the Former Yugoslav Republic of"},{"Code": "MG", "Name": "Madagascar"},{"Code": "MW", "Name": "Malawi"},{"Code": "MY", "Name": "Malaysia"},{"Code": "MV", "Name": "Maldives"},{"Code": "ML", "Name": "Mali"},{"Code": "MT", "Name": "Malta"},{"Code": "MH", "Name": "Marshall Islands"},{"Code": "MQ", "Name": "Martinique"},{"Code": "MR", "Name": "Mauritania"},{"Code": "MU", "Name": "Mauritius"},{"Code": "YT", "Name": "Mayotte"},{"Code": "MX", "Name": "Mexico"},{"Code": "FM", "Name": "Micronesia, Federated States of"},{"Code": "MD", "Name": "Moldova, Republic of"},{"Code": "MC", "Name": "Monaco"},{"Code": "MN", "Name": "Mongolia"},{"Code": "ME", "Name": "Montenegro"},{"Code": "MS", "Name": "Montserrat"},{"Code": "MA", "Name": "Morocco"},{"Code": "MZ", "Name": "Mozambique"},{"Code": "MM", "Name": "Myanmar"},{"Code": "NA", "Name": "Namibia"},{"Code": "NR", "Name": "Nauru"},{"Code": "NP", "Name": "Nepal"},{"Code": "NL", "Name": "Netherlands"},{"Code": "NC", "Name": "New Caledonia"},{"Code": "NZ", "Name": "New Zealand"},{"Code": "NI", "Name": "Nicaragua"},{"Code": "NE", "Name": "Niger"},{"Code": "NG", "Name": "Nigeria"},{"Code": "NU", "Name": "Niue"},{"Code": "NF", "Name": "Norfolk Island"},{"Code": "MP", "Name": "Northern Mariana Islands"},{"Code": "NO", "Name": "Norway"},{"Code": "OM", "Name": "Oman"},{"Code": "PK", "Name": "Pakistan"},{"Code": "PW", "Name": "Palau"},{"Code": "PS", "Name": "Palestine, State of"},{"Code": "PA", "Name": "Panama"},{"Code": "PG", "Name": "Papua New Guinea"},{"Code": "PY", "Name": "Paraguay"},{"Code": "PE", "Name": "Peru"},{"Code": "PH", "Name": "Philippines"},{"Code": "PN", "Name": "Pitcairn"},{"Code": "PL", "Name": "Poland"},{"Code": "PT", "Name": "Portugal"},{"Code": "PR", "Name": "Puerto Rico"},{"Code": "QA", "Name": "Qatar"},{"Code": "RE", "Name": "R\u00e9union"},{"Code": "RO", "Name": "Romania"},{"Code": "RU", "Name": "Russian Federation"},{"Code": "RW", "Name": "Rwanda"},{"Code": "BL", "Name": "Saint Barth\u00e9lemy"},{"Code": "SH", "Name": "Saint Helena, Ascension and Tristan da Cunha"},{"Code": "KN", "Name": "Saint Kitts and Nevis"},{"Code": "LC", "Name": "Saint Lucia"},{"Code": "MF", "Name": "Saint Martin (French part)"},{"Code": "PM", "Name": "Saint Pierre and Miquelon"},{"Code": "VC", "Name": "Saint Vincent and the Grenadines"},{"Code": "WS", "Name": "Samoa"},{"Code": "SM", "Name": "San Marino"},{"Code": "ST", "Name": "Sao Tome and Principe"},{"Code": "SA", "Name": "Saudi Arabia"},{"Code": "SN", "Name": "Senegal"},{"Code": "RS", "Name": "Serbia"},{"Code": "SC", "Name": "Seychelles"},{"Code": "SL", "Name": "Sierra Leone"},{"Code": "SG", "Name": "Singapore"},{"Code": "SX", "Name": "Sint Maarten (Dutch part)"},{"Code": "SK", "Name": "Slovakia"},{"Code": "SI", "Name": "Slovenia"},{"Code": "SB", "Name": "Solomon Islands"},{"Code": "SO", "Name": "Somalia"},{"Code": "ZA", "Name": "South Africa"},{"Code": "GS", "Name": "South Georgia and the South Sandwich Islands"},{"Code": "SS", "Name": "South Sudan"},{"Code": "ES", "Name": "Spain"},{"Code": "LK", "Name": "Sri Lanka"},{"Code": "SD", "Name": "Sudan"},{"Code": "SR", "Name": "Suriname"},{"Code": "SJ", "Name": "Svalbard and Jan Mayen"},{"Code": "SZ", "Name": "Swaziland"},{"Code": "SE", "Name": "Sweden"},{"Code": "CH", "Name": "Switzerland"},{"Code": "SY", "Name": "Syrian Arab Republic"},{"Code": "TW", "Name": "Taiwan, Province of China"},{"Code": "TJ", "Name": "Tajikistan"},{"Code": "TZ", "Name": "Tanzania, United Republic of"},{"Code": "TH", "Name": "Thailand"},{"Code": "TL", "Name": "Timor-Leste"},{"Code": "TG", "Name": "Togo"},{"Code": "TK", "Name": "Tokelau"},{"Code": "TO", "Name": "Tonga"},{"Code": "TT", "Name": "Trinidad and Tobago"},{"Code": "TN", "Name": "Tunisia"},{"Code": "TR", "Name": "Turkey"},{"Code": "TM", "Name": "Turkmenistan"},{"Code": "TC", "Name": "Turks and Caicos Islands"},{"Code": "TV", "Name": "Tuvalu"},{"Code": "UG", "Name": "Uganda"},{"Code": "UA", "Name": "Ukraine"},{"Code": "AE", "Name": "United Arab Emirates"},{"Code": "GB", "Name": "United Kingdom"},{"Code": "US", "Name": "United States"},{"Code": "UM", "Name": "United States Minor Outlying Islands"},{"Code": "UY", "Name": "Uruguay"},{"Code": "UZ", "Name": "Uzbekistan"},{"Code": "VU", "Name": "Vanuatu"},{"Code": "VE", "Name": "Venezuela, Bolivarian Republic of"},{"Code": "VN", "Name": "Viet Nam"},{"Code": "VG", "Name": "Virgin Islands, British"},{"Code": "VI", "Name": "Virgin Islands, U.S."},{"Code": "WF", "Name": "Wallis and Futuna"},{"Code": "EH", "Name": "Western Sahara"},{"Code": "YE", "Name": "Yemen"},{"Code": "ZM", "Name": "Zambia"},{"Code": "ZW", "Name": "Zimbabwe"}];
+const g_countries = [{ "Code": "AF", "Name": "Afghanistan" }, { "Code": "AX", "Name": "\u00c5land Islands" }, { "Code": "AL", "Name": "Albania" }, { "Code": "DZ", "Name": "Algeria" }, { "Code": "AS", "Name": "American Samoa" }, { "Code": "AD", "Name": "Andorra" }, { "Code": "AO", "Name": "Angola" }, { "Code": "AI", "Name": "Anguilla" }, { "Code": "AQ", "Name": "Antarctica" }, { "Code": "AG", "Name": "Antigua and Barbuda" }, { "Code": "AR", "Name": "Argentina" }, { "Code": "AM", "Name": "Armenia" }, { "Code": "AW", "Name": "Aruba" }, { "Code": "AU", "Name": "Australia" }, { "Code": "AT", "Name": "Austria" }, { "Code": "AZ", "Name": "Azerbaijan" }, { "Code": "BS", "Name": "Bahamas" }, { "Code": "BH", "Name": "Bahrain" }, { "Code": "BD", "Name": "Bangladesh" }, { "Code": "BB", "Name": "Barbados" }, { "Code": "BY", "Name": "Belarus" }, { "Code": "BE", "Name": "Belgium" }, { "Code": "BZ", "Name": "Belize" }, { "Code": "BJ", "Name": "Benin" }, { "Code": "BM", "Name": "Bermuda" }, { "Code": "BT", "Name": "Bhutan" }, { "Code": "BO", "Name": "Bolivia, Plurinational State of" }, { "Code": "BQ", "Name": "Bonaire, Sint Eustatius and Saba" }, { "Code": "BA", "Name": "Bosnia and Herzegovina" }, { "Code": "BW", "Name": "Botswana" }, { "Code": "BV", "Name": "Bouvet Island" }, { "Code": "BR", "Name": "Brazil" }, { "Code": "IO", "Name": "British Indian Ocean Territory" }, { "Code": "BN", "Name": "Brunei Darussalam" }, { "Code": "BG", "Name": "Bulgaria" }, { "Code": "BF", "Name": "Burkina Faso" }, { "Code": "BI", "Name": "Burundi" }, { "Code": "KH", "Name": "Cambodia" }, { "Code": "CM", "Name": "Cameroon" }, { "Code": "CA", "Name": "Canada" }, { "Code": "CV", "Name": "Cape Verde" }, { "Code": "KY", "Name": "Cayman Islands" }, { "Code": "CF", "Name": "Central African Republic" }, { "Code": "TD", "Name": "Chad" }, { "Code": "CL", "Name": "Chile" }, { "Code": "CN", "Name": "China" }, { "Code": "CX", "Name": "Christmas Island" }, { "Code": "CC", "Name": "Cocos (Keeling) Islands" }, { "Code": "CO", "Name": "Colombia" }, { "Code": "KM", "Name": "Comoros" }, { "Code": "CG", "Name": "Congo" }, { "Code": "CD", "Name": "Congo, the Democratic Republic of the" }, { "Code": "CK", "Name": "Cook Islands" }, { "Code": "CR", "Name": "Costa Rica" }, { "Code": "CI", "Name": "C\u00f4te d'Ivoire" }, { "Code": "HR", "Name": "Croatia" }, { "Code": "CU", "Name": "Cuba" }, { "Code": "CW", "Name": "Cura\u00e7ao" }, { "Code": "CY", "Name": "Cyprus" }, { "Code": "CZ", "Name": "Czech Republic" }, { "Code": "DK", "Name": "Denmark" }, { "Code": "DJ", "Name": "Djibouti" }, { "Code": "DM", "Name": "Dominica" }, { "Code": "DO", "Name": "Dominican Republic" }, { "Code": "EC", "Name": "Ecuador" }, { "Code": "EG", "Name": "Egypt" }, { "Code": "SV", "Name": "El Salvador" }, { "Code": "GQ", "Name": "Equatorial Guinea" }, { "Code": "ER", "Name": "Eritrea" }, { "Code": "EE", "Name": "Estonia" }, { "Code": "ET", "Name": "Ethiopia" }, { "Code": "FK", "Name": "Falkland Islands (Malvinas)" }, { "Code": "FO", "Name": "Faroe Islands" }, { "Code": "FJ", "Name": "Fiji" }, { "Code": "FI", "Name": "Finland" }, { "Code": "FR", "Name": "France" }, { "Code": "GF", "Name": "French Guiana" }, { "Code": "PF", "Name": "French Polynesia" }, { "Code": "TF", "Name": "French Southern Territories" }, { "Code": "GA", "Name": "Gabon" }, { "Code": "GM", "Name": "Gambia" }, { "Code": "GE", "Name": "Georgia" }, { "Code": "DE", "Name": "Germany" }, { "Code": "GH", "Name": "Ghana" }, { "Code": "GI", "Name": "Gibraltar" }, { "Code": "GR", "Name": "Greece" }, { "Code": "GL", "Name": "Greenland" }, { "Code": "GD", "Name": "Grenada" }, { "Code": "GP", "Name": "Guadeloupe" }, { "Code": "GU", "Name": "Guam" }, { "Code": "GT", "Name": "Guatemala" }, { "Code": "GG", "Name": "Guernsey" }, { "Code": "GN", "Name": "Guinea" }, { "Code": "GW", "Name": "Guinea-Bissau" }, { "Code": "GY", "Name": "Guyana" }, { "Code": "HT", "Name": "Haiti" }, { "Code": "HM", "Name": "Heard Island and McDonald Islands" }, { "Code": "VA", "Name": "Holy See (Vatican City State)" }, { "Code": "HN", "Name": "Honduras" }, { "Code": "HK", "Name": "Hong Kong" }, { "Code": "HU", "Name": "Hungary" }, { "Code": "IS", "Name": "Iceland" }, { "Code": "IN", "Name": "India" }, { "Code": "ID", "Name": "Indonesia" }, { "Code": "IR", "Name": "Iran, Islamic Republic of" }, { "Code": "IQ", "Name": "Iraq" }, { "Code": "IE", "Name": "Ireland" }, { "Code": "IM", "Name": "Isle of Man" }, { "Code": "IL", "Name": "Israel" }, { "Code": "IT", "Name": "Italy" }, { "Code": "JM", "Name": "Jamaica" }, { "Code": "JP", "Name": "Japan" }, { "Code": "JE", "Name": "Jersey" }, { "Code": "JO", "Name": "Jordan" }, { "Code": "KZ", "Name": "Kazakhstan" }, { "Code": "KE", "Name": "Kenya" }, { "Code": "KI", "Name": "Kiribati" }, { "Code": "KP", "Name": "Korea, Democratic People's Republic of" }, { "Code": "KR", "Name": "Korea, Republic of" }, { "Code": "KW", "Name": "Kuwait" }, { "Code": "KG", "Name": "Kyrgyzstan" }, { "Code": "LA", "Name": "Lao People's Democratic Republic" }, { "Code": "LV", "Name": "Latvia" }, { "Code": "LB", "Name": "Lebanon" }, { "Code": "LS", "Name": "Lesotho" }, { "Code": "LR", "Name": "Liberia" }, { "Code": "LY", "Name": "Libya" }, { "Code": "LI", "Name": "Liechtenstein" }, { "Code": "LT", "Name": "Lithuania" }, { "Code": "LU", "Name": "Luxembourg" }, { "Code": "MO", "Name": "Macao" }, { "Code": "MK", "Name": "Macedonia, the Former Yugoslav Republic of" }, { "Code": "MG", "Name": "Madagascar" }, { "Code": "MW", "Name": "Malawi" }, { "Code": "MY", "Name": "Malaysia" }, { "Code": "MV", "Name": "Maldives" }, { "Code": "ML", "Name": "Mali" }, { "Code": "MT", "Name": "Malta" }, { "Code": "MH", "Name": "Marshall Islands" }, { "Code": "MQ", "Name": "Martinique" }, { "Code": "MR", "Name": "Mauritania" }, { "Code": "MU", "Name": "Mauritius" }, { "Code": "YT", "Name": "Mayotte" }, { "Code": "MX", "Name": "Mexico" }, { "Code": "FM", "Name": "Micronesia, Federated States of" }, { "Code": "MD", "Name": "Moldova, Republic of" }, { "Code": "MC", "Name": "Monaco" }, { "Code": "MN", "Name": "Mongolia" }, { "Code": "ME", "Name": "Montenegro" }, { "Code": "MS", "Name": "Montserrat" }, { "Code": "MA", "Name": "Morocco" }, { "Code": "MZ", "Name": "Mozambique" }, { "Code": "MM", "Name": "Myanmar" }, { "Code": "NA", "Name": "Namibia" }, { "Code": "NR", "Name": "Nauru" }, { "Code": "NP", "Name": "Nepal" }, { "Code": "NL", "Name": "Netherlands" }, { "Code": "NC", "Name": "New Caledonia" }, { "Code": "NZ", "Name": "New Zealand" }, { "Code": "NI", "Name": "Nicaragua" }, { "Code": "NE", "Name": "Niger" }, { "Code": "NG", "Name": "Nigeria" }, { "Code": "NU", "Name": "Niue" }, { "Code": "NF", "Name": "Norfolk Island" }, { "Code": "MP", "Name": "Northern Mariana Islands" }, { "Code": "NO", "Name": "Norway" }, { "Code": "OM", "Name": "Oman" }, { "Code": "PK", "Name": "Pakistan" }, { "Code": "PW", "Name": "Palau" }, { "Code": "PS", "Name": "Palestine, State of" }, { "Code": "PA", "Name": "Panama" }, { "Code": "PG", "Name": "Papua New Guinea" }, { "Code": "PY", "Name": "Paraguay" }, { "Code": "PE", "Name": "Peru" }, { "Code": "PH", "Name": "Philippines" }, { "Code": "PN", "Name": "Pitcairn" }, { "Code": "PL", "Name": "Poland" }, { "Code": "PT", "Name": "Portugal" }, { "Code": "PR", "Name": "Puerto Rico" }, { "Code": "QA", "Name": "Qatar" }, { "Code": "RE", "Name": "R\u00e9union" }, { "Code": "RO", "Name": "Romania" }, { "Code": "RU", "Name": "Russian Federation" }, { "Code": "RW", "Name": "Rwanda" }, { "Code": "BL", "Name": "Saint Barth\u00e9lemy" }, { "Code": "SH", "Name": "Saint Helena, Ascension and Tristan da Cunha" }, { "Code": "KN", "Name": "Saint Kitts and Nevis" }, { "Code": "LC", "Name": "Saint Lucia" }, { "Code": "MF", "Name": "Saint Martin (French part)" }, { "Code": "PM", "Name": "Saint Pierre and Miquelon" }, { "Code": "VC", "Name": "Saint Vincent and the Grenadines" }, { "Code": "WS", "Name": "Samoa" }, { "Code": "SM", "Name": "San Marino" }, { "Code": "ST", "Name": "Sao Tome and Principe" }, { "Code": "SA", "Name": "Saudi Arabia" }, { "Code": "SN", "Name": "Senegal" }, { "Code": "RS", "Name": "Serbia" }, { "Code": "SC", "Name": "Seychelles" }, { "Code": "SL", "Name": "Sierra Leone" }, { "Code": "SG", "Name": "Singapore" }, { "Code": "SX", "Name": "Sint Maarten (Dutch part)" }, { "Code": "SK", "Name": "Slovakia" }, { "Code": "SI", "Name": "Slovenia" }, { "Code": "SB", "Name": "Solomon Islands" }, { "Code": "SO", "Name": "Somalia" }, { "Code": "ZA", "Name": "South Africa" }, { "Code": "GS", "Name": "South Georgia and the South Sandwich Islands" }, { "Code": "SS", "Name": "South Sudan" }, { "Code": "ES", "Name": "Spain" }, { "Code": "LK", "Name": "Sri Lanka" }, { "Code": "SD", "Name": "Sudan" }, { "Code": "SR", "Name": "Suriname" }, { "Code": "SJ", "Name": "Svalbard and Jan Mayen" }, { "Code": "SZ", "Name": "Swaziland" }, { "Code": "SE", "Name": "Sweden" }, { "Code": "CH", "Name": "Switzerland" }, { "Code": "SY", "Name": "Syrian Arab Republic" }, { "Code": "TW", "Name": "Taiwan, Province of China" }, { "Code": "TJ", "Name": "Tajikistan" }, { "Code": "TZ", "Name": "Tanzania, United Republic of" }, { "Code": "TH", "Name": "Thailand" }, { "Code": "TL", "Name": "Timor-Leste" }, { "Code": "TG", "Name": "Togo" }, { "Code": "TK", "Name": "Tokelau" }, { "Code": "TO", "Name": "Tonga" }, { "Code": "TT", "Name": "Trinidad and Tobago" }, { "Code": "TN", "Name": "Tunisia" }, { "Code": "TR", "Name": "Turkey" }, { "Code": "TM", "Name": "Turkmenistan" }, { "Code": "TC", "Name": "Turks and Caicos Islands" }, { "Code": "TV", "Name": "Tuvalu" }, { "Code": "UG", "Name": "Uganda" }, { "Code": "UA", "Name": "Ukraine" }, { "Code": "AE", "Name": "United Arab Emirates" }, { "Code": "GB", "Name": "United Kingdom" }, { "Code": "US", "Name": "United States" }, { "Code": "UM", "Name": "United States Minor Outlying Islands" }, { "Code": "UY", "Name": "Uruguay" }, { "Code": "UZ", "Name": "Uzbekistan" }, { "Code": "VU", "Name": "Vanuatu" }, { "Code": "VE", "Name": "Venezuela, Bolivarian Republic of" }, { "Code": "VN", "Name": "Viet Nam" }, { "Code": "VG", "Name": "Virgin Islands, British" }, { "Code": "VI", "Name": "Virgin Islands, U.S." }, { "Code": "WF", "Name": "Wallis and Futuna" }, { "Code": "EH", "Name": "Western Sahara" }, { "Code": "YE", "Name": "Yemen" }, { "Code": "ZM", "Name": "Zambia" }, { "Code": "ZW", "Name": "Zimbabwe" }];
+
+const g_default_textstrings_enterprise_umapi = {
+  "org_id": "Org ID goes here",
+  "api_key": "API key goes here",
+  "client_secret": "Client secret goes here",
+  "tech_acct": "Tech account ID goes here",
+  "priv_key_path": "path/to/private/key/file"
+}
+
+const g_default_textstrings_ldap = {
+  "username": "LDAP or Credential Manager username goes here",
+  "password": "LDAP password goes here",
+  "host": "LDAP host URL goes here.  e.g. ldap://ldap.example.com",
+  "base_dn": "defines the base DN. e.g. DC=example,DC=com"
+}
 
 export default class extends Component {
   constructor() {
     super();
 
-    this.state = { 
+    this.state = {
       isonerror: false,
-      alertmsg: "", 
+      alertmsg: "",
       selected: 0,
       cancontinue: false,
-      configData : {},
+      configData: {},
       appData: {
         fi_ust_conf_path: null,
         countries: g_countries
       },
       wizsteps: [
-        {idx:0, title: "Home", icon:"fa-home"},
-        {idx:1,title: "User Management API", icon:"fa-cloud-upload", },
-        {idx:2,title: "Enterprise Directory", icon:"fa-sitemap"},
-        {idx:3,title: "User Sync Settings", icon:"fa-cogs"},
-        {idx:4,title: "Summary & Next Steps", icon:"fa-check-circle"}
+        { idx: 0, title: "Home", icon: "fa-home" },
+        { idx: 1, title: "User Management API", icon: "fa-cloud-upload", },
+        { idx: 2, title: "Enterprise Directory", icon: "fa-sitemap" },
+        { idx: 3, title: "User Sync Settings", icon: "fa-cogs" },
+        { idx: 4, title: "Summary & Next Steps", icon: "fa-check-circle" }
       ],
       helpstring: ""
     }
@@ -44,88 +59,88 @@ export default class extends Component {
   }
 
   handleSubmit() {
-      var alertmsg = "Invalid or incorrect information is provided.";
-      this.setState({alertmsg: alertmsg, isonerror: true});
+    var alertmsg = "Invalid or incorrect information is provided.";
+    this.setState({ alertmsg: alertmsg, isonerror: true });
   }
 
-  onNext = (e) =>{
+  onNext = (e) => {
     e.preventDefault();
 
     const s = this.state;
-    if(s.selected === s.wizsteps.length-1){
+    if (s.selected === s.wizsteps.length - 1) {
       const ans = window.confirm("Do you want to exit?");
-      if(ans){
+      if (ans) {
         window.close();
       }
     }
-    else if(s.selected > 0){
+    else if (s.selected > 0) {
       const configfile = s.appData.fi_ust_conf_path;
       const cd = this.processConfigDataForServer(s.configData);
       const ausers = cd.adobe_users;
       const dusers = cd.directory_users;
 
       let isok = false;
-      if(s.selected === 1){
+      if (s.selected === 1) {
         const ent = ausers.connectors.umapi_data.enterprise;
-        if(ent.api_key && ent.client_secret && ent.org_id && ent.tech_acct 
-          && ent.priv_key_path){
-          isok= true;
+        if (ent.api_key && ent.client_secret && ent.org_id && ent.tech_acct
+          && ent.priv_key_path) {
+          isok = true;
         }
       }
-      else if (s.selected === 2){
+      else if (s.selected === 2) {
         const ldap = dusers.connectors.ldap_data;
-        if(ldap.host && ldap.username && (ldap.password || ldap.secure_password_key) && ldap.base_dn 
-          && ldap.all_users_filter && ldap.user_email_format && ldap.group_filter_format){
-          isok= true;
+        if (ldap.host && ldap.username && (ldap.password || ldap.secure_password_key) && ldap.base_dn
+          && ldap.all_users_filter && ldap.user_email_format && ldap.group_filter_format) {
+          isok = true;
         }
       }
-      else if(s.selected === 3){
-        if(dusers.default_country_code && dusers.user_identity_type 
-          && dusers.groups.length > 0 && cd.limits.max_adobe_only_users > 0){
-          isok= true;
+      else if (s.selected === 3) {
+        if (dusers.default_country_code && dusers.user_identity_type
+          && dusers.groups.length > 0 && cd.limits.max_adobe_only_users > 0) {
+          isok = true;
         }
       }
 
-      if(isok){
+      if (isok) {
         const stage = s.selected === 1 ? "umapi" :
-                          s.selected === 2 ? "ldap" : "ust";
+          s.selected === 2 ? "ldap" : "ust";
 
-        this.saveConfigFile(configfile, cd, stage, ()=>{
+        this.saveConfigFile(configfile, cd, stage, () => {
           this.setState(prevState => ({
-            selected: prevState.selected < prevState.wizsteps.length-1 ? ++prevState.selected : prevState.selected,
-            cancontinue : true
+            selected: prevState.selected < prevState.wizsteps.length - 1 ? ++prevState.selected : prevState.selected,
+            cancontinue: true
           }));
           console.log("Saved.");
         });
 
         this.setState(prevState => ({
-          configview : false,
-          cancontinue : false
+          configview: false,
+          cancontinue: false
         }));
         console.log("Saving data...");
       }
-      else{
+      else {
         alert("Invalid information provided.\r\nPlease fill in all required information.")
       }
-    } 
+    }
     else {
       this.setState(prevState => ({
-        selected: prevState.selected < prevState.wizsteps.length-1 ? ++prevState.selected : prevState.selected,
-        configview : false,
-        cancontinue : true
+        selected: prevState.selected < prevState.wizsteps.length - 1 ? ++prevState.selected : prevState.selected,
+        configview: false,
+        cancontinue: true
       }));
     }
   }
 
-  onBack = () =>{
+  onBack = () => {
     this.setState(prevState => ({
       selected: prevState.selected > 0 ? --prevState.selected : prevState.selected,
-      configview : false
-    }));  
+      configview: false
+    }));
   }
-  
+
   showHelp = (msgstr) => {
-    this.setState({helpstring: msgstr});
+    this.setState({ helpstring: msgstr });
   }
 
   onLoadConfig = () => {
@@ -142,181 +157,200 @@ export default class extends Component {
       <div>
         <Navbar color="dark" className="navbar-dark" fixed="top">
           <NavbarBrand href="#">
-            <img src={logo} style={{width: 30, height: 30}} className="d-inline-block align-top" alt="" />
-            <span style={{ marginLeft:10}}>User Sync Tool<small style={{ textTransform: "uppercase", color:"darkgray" }}>&nbsp;&nbsp;Configuration Wizard</small></span>
+            <img src={logo} style={{ width: 30, height: 30 }} className="d-inline-block align-top" alt="" />
+            <span style={{ marginLeft: 10 }}>User Sync Tool<small style={{ textTransform: "uppercase", color: "darkgray" }}>&nbsp;&nbsp;Configuration Wizard</small></span>
           </NavbarBrand>
         </Navbar>
         <Container fluid>
           <Row>
             <Col tag="main" sm={9} className="ml-sm-auto pt-3" role="main">
-              <Container fluid={true}>              
-                  <Row>
-                    <Col sm={12} style={{marginTop:-10}}>
-                      <ul className="progress-tracker progress-tracker--text progress-tracker--text-top">
-                        {
-                          s.wizsteps.map((k, i) => 
-                            <li key={i} className={"progress-step " + 
-                              (s.selected === i ? "is-active" : i < s.selected ? "is-complete": "") 
-                            }>
-                              <span className={"progress-text " + (s.selected === i ? "text-primary" :"")}>
-                                <span className="progress-title"></span>
-                                <small>{k.title}</small>
-                              </span>
-                              <span className="progress-marker"><i className={"fa "+ k.icon}></i></span>
-                            </li>)
-                        }                        
-                      </ul>
-                    </Col>      
-                  </Row>
-                  <Row>
-                      <Col sm={12} style={{overflowX: "auto", borderRight:"1px solid lightgray", marginBottom: 30, height:330}}>
-                          <Alert 
-                            color={this.state.isonerror? "danger": "success"} 
-                            isOpen={this.state.alertmsg?true: false} toggle={this.onAlertDismiss}
-                            style={{margin:10}}
-                            >
-                              {this.state.alertmsg}
-                          </Alert>
-                          {
-                            s.selected === 0 ? <Home showHelp={this.showHelp} onLoadConfig={this.onLoadConfig} configData={s.configData} appData={s.appData} /> :
-                              s.selected === 1 ? <UMAPIConfig showHelp={this.showHelp} configData={s.configData} appData={s.appData} /> :
-                                s.selected === 2 ? <LDAPConfig showHelp={this.showHelp} configData={s.configData} appData={s.appData} /> : 
-                                  s.selected === 3 ? <USTConfig showHelp={this.showHelp} configData={s.configData} appData={s.appData} /> :
-                                    <Summary showHelp={this.showHelp} configData={s.configData} />
-                          }
-                      </Col>
-                  </Row>
+              <Container fluid={true}>
+                <Row>
+                  <Col sm={12} style={{ marginTop: -10 }}>
+                    <ul className="progress-tracker progress-tracker--text progress-tracker--text-top">
+                      {
+                        s.wizsteps.map((k, i) =>
+                          <li key={i} className={"progress-step " +
+                            (s.selected === i ? "is-active" : i < s.selected ? "is-complete" : "")
+                          }>
+                            <span className={"progress-text " + (s.selected === i ? "text-primary" : "")}>
+                              <span className="progress-title"></span>
+                              <small>{k.title}</small>
+                            </span>
+                            <span className="progress-marker"><i className={"fa " + k.icon}></i></span>
+                          </li>)
+                      }
+                    </ul>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col sm={12} style={{ overflowX: "auto", borderRight: "1px solid lightgray", marginBottom: 30, height: 330 }}>
+                    <Alert
+                      color={this.state.isonerror ? "danger" : "success"}
+                      isOpen={this.state.alertmsg ? true : false} toggle={this.onAlertDismiss}
+                      style={{ margin: 10 }}
+                    >
+                      {this.state.alertmsg}
+                    </Alert>
+                    {
+                      s.selected === 0 ? <Home showHelp={this.showHelp} onLoadConfig={this.onLoadConfig} configData={s.configData} appData={s.appData} /> :
+                        s.selected === 1 ? <UMAPIConfig showHelp={this.showHelp} configData={s.configData} appData={s.appData} /> :
+                          s.selected === 2 ? <LDAPConfig showHelp={this.showHelp} configData={s.configData} appData={s.appData} /> :
+                            s.selected === 3 ? <USTConfig showHelp={this.showHelp} configData={s.configData} appData={s.appData} /> :
+                              <Summary showHelp={this.showHelp} configData={s.configData} />
+                    }
+                  </Col>
+                </Row>
               </Container>
             </Col>
-            <Col sm={3} style={{padding:10, paddingRight: 15}}>
-              <div style={{ marginTop:95}}>
+            <Col sm={3} style={{ padding: 10, paddingRight: 15 }}>
+              <div style={{ marginTop: 95 }}>
                 <span>{s.helpstring}</span>
               </div>
-              <br/>
+              <br />
               <div>
-                <span>Go to <a  href="#" onClick={()=> openexternal('https://adobe-apiplatform.github.io/user-sync.py/en/')}>GitHub</a> for more information</span>
+                <span>Go to <a href="#" onClick={() => openexternal('https://adobe-apiplatform.github.io/user-sync.py/en/')}>GitHub</a> for more information</span>
               </div>
             </Col>
           </Row>
         </Container>
         <Navbar color="light" className="navbar-light bg-faded" fixed="bottom">
           <div>
-              <Button size="sm" color="primary" style={{marginLeft:5, minWidth: 125}} onClick={this.onNext} disabled={!s.cancontinue}>
-                {s.selected === 0 ? "Continue" : s.selected === s.wizsteps.length-1 ? "Close" : "Save & Continue"}
-              </Button>
-              {
-                s.selected !== 0 ?
-                  <Button color="link" size="sm"onClick={this.onBack}>Back</Button> : null
-              }
+            <Button size="sm" color="primary" style={{ marginLeft: 5, minWidth: 125 }} onClick={this.onNext} disabled={!s.cancontinue}>
+              {s.selected === 0 ? "Continue" : s.selected === s.wizsteps.length - 1 ? "Close" : "Save & Continue"}
+            </Button>
+            {
+              s.selected !== 0 ?
+                <Button color="link" size="sm" onClick={this.onBack}>Back</Button> : null
+            }
           </div>
         </Navbar>
       </div>
     );
   }
 
-  processConfigDataFromServer(cd){
+  processConfigDataFromServer(cd) {
     return cd;
   }
 
-  processConfigDataForServer(cd){
+  processConfigDataForServer(cd) {
     const groups = cd.directory_users.groups;
     const groups_new = [];
-    for(let g in groups){
-      groups_new.push({ 
-        directory_group: groups[g].directory_group, 
+    for (let g in groups) {
+      groups_new.push({
+        directory_group: groups[g].directory_group,
         adobe_groups: groups[g].adobe_groups
       });
     }
-    cd.directory_users.groups = groups_new;    
+    cd.directory_users.groups = groups_new;
     return cd;
   }
 
-  readYMLFile(configFile){
+  readYMLFile(configFile) {
     // Get document, or throw exception on error
     return yaml.safeLoad(fs.readFileSync(configFile, 'utf8'));
   }
 
-  writeYMLFile(configFile, d, callback){
+  writeYMLFile(configFile, d, callback) {
     const basedir = path.dirname(configFile);
-    const bakfile = path.join(basedir, "_"  + path.win32.basename(configFile)+ ".bak");
-    if(!fs.existsSync(bakfile)){
+    const bakfile = path.join(basedir, "_" + path.win32.basename(configFile) + ".bak");
+    if (!fs.existsSync(bakfile)) {
       fs.copyFileSync(configFile, bakfile);
     }
-    
-    const ymldata = yaml.dump(d, {lineWidth: -1});
-    fs.writeFile(configFile, ymldata, 'utf8', (err)=>{
-      if(err){
+
+    const ymldata = yaml.dump(d, { lineWidth: -1 });
+    fs.writeFile(configFile, ymldata, 'utf8', (err) => {
+      if (err) {
         return console.log(err);
       }
 
       console.log("The file was saved!");
-      if(callback){
+      if (callback) {
         callback();
       }
     });
   }
 
-  loadConfigFile(configFile){ 
+  loadConfigFile(configFile) {
     try {
       const basedir = path.dirname(configFile);
       const d = this.readYMLFile(configFile);
-      
+
       const umapidoc = this.readYMLFile(path.join(basedir, d["adobe_users"]["connectors"]["umapi"]));
       const ldapdoc = this.readYMLFile(path.join(basedir, d["directory_users"]["connectors"]["ldap"]));
-      
+
+      // process and clear default text 
+      const ent_umapi = umapidoc["enterprise"];
+      Object.keys(ent_umapi).forEach(k => {
+        if (k in g_default_textstrings_enterprise_umapi && ent_umapi[k] === g_default_textstrings_enterprise_umapi[k]) {
+          ent_umapi[k] = "";
+        }
+      });
+
+      Object.keys(ldapdoc).forEach(k => {
+        if (k in g_default_textstrings_ldap && ldapdoc[k] === g_default_textstrings_ldap[k]) {
+          ldapdoc[k] = "";
+        }
+      });
+
       d["adobe_users"]["connectors"]["umapi_data"] = umapidoc;
       d["directory_users"]["connectors"]["ldap_data"] = ldapdoc;
-      
+
       // process empty adobe user group mappings (replace None for empty item mapping) to help round-trip save
-      d['directory_users']['groups'].forEach( e => {
-        if (!e["adobe_groups"]){
+      d['directory_users']['groups'].forEach(e => {
+        if (!e["adobe_groups"]) {
           e["adobe_groups"] = [""];
         }
       });
 
-      this.setState({ 
+      this.setState({
         configData: d,
         cancontinue: true
       });
     } catch (e) {
       console.log(e);
+      alert("Failed to load configurations.")
     }
   }
 
-  saveConfigFile(configFile, ds, connector, callback){
+  saveConfigFile(configFile, ds, connector, callback) {
     let ok = false;
-    const basedir = path.dirname(configFile);
-    let d = JSON.parse(JSON.stringify(ds));
+    try {
+      const basedir = path.dirname(configFile);
+      let d = JSON.parse(JSON.stringify(ds));
 
-    switch(connector){
-      case 'umapi':
-        this.writeYMLFile(
-          path.join(basedir, d["adobe_users"]["connectors"]["umapi"]), 
-          d["adobe_users"]["connectors"]["umapi_data"], 
-          callback);
-        ok = true;
-        break;
-      case 'ldap':
-        this.writeYMLFile(
-          path.join(basedir, d["directory_users"]["connectors"]["ldap"]), 
-          d["directory_users"]["connectors"]["ldap_data"], 
-          callback);
-        ok = true;
-        break;
-      case 'ust':
-        delete d["adobe_users"]["connectors"]["umapi_data"];  
-        delete d["directory_users"]["connectors"]["ldap_data"];
+      switch (connector) {
+        case 'umapi':
+          this.writeYMLFile(
+            path.join(basedir, d["adobe_users"]["connectors"]["umapi"]),
+            d["adobe_users"]["connectors"]["umapi_data"],
+            callback);
+          ok = true;
+          break;
+        case 'ldap':
+          this.writeYMLFile(
+            path.join(basedir, d["directory_users"]["connectors"]["ldap"]),
+            d["directory_users"]["connectors"]["ldap_data"],
+            callback);
+          ok = true;
+          break;
+        case 'ust':
+          delete d["adobe_users"]["connectors"]["umapi_data"];
+          delete d["directory_users"]["connectors"]["ldap_data"];
 
-        // process empty adobe user group mappings (replace empty item for None mapping) to help round-trip save
-        d['directory_users']['groups'].forEach(e => {
-          if(e["adobe_groups"].every(k => !k)){
-            e["adobe_groups"] = null;
-          }
-        });
-        
-        this.writeYMLFile(configFile, d, callback);
-        ok = true;
-        break;  
+          // process empty adobe user group mappings (replace empty item for None mapping) to help round-trip save
+          d['directory_users']['groups'].forEach(e => {
+            if (e["adobe_groups"].every(k => !k)) {
+              e["adobe_groups"] = null;
+            }
+          });
+
+          this.writeYMLFile(configFile, d, callback);
+          ok = true;
+          break;
+      }
+    } catch (e) {
+      console.log(e);
     }
   }
 }
