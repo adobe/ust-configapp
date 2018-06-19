@@ -293,6 +293,14 @@ export default class extends Component {
         }
       });
 
+      if(ldapdoc.hasOwnProperty("secure_password_key")){
+        ldapdoc["secure_password_key_enabled"] = true;
+      }
+
+      if(ldapdoc.hasOwnProperty("user_username_format")){
+        ldapdoc["user_username_format_enabled"] = true;
+      }
+
       d["adobe_users"]["connectors"]["umapi_data"] = umapidoc;
       d["directory_users"]["connectors"]["ldap_data"] = ldapdoc;
 
@@ -317,6 +325,7 @@ export default class extends Component {
     let ok = false;
     try {
       const basedir = path.dirname(configFile);
+      // create deep copy of object for save
       let d = JSON.parse(JSON.stringify(ds));
 
       switch (connector) {
@@ -328,9 +337,24 @@ export default class extends Component {
           ok = true;
           break;
         case 'ldap':
+          const ldapobj = d["directory_users"]["connectors"]["ldap_data"];
+          if(ldapobj.hasOwnProperty("secure_password_key_enabled")){
+            delete ldapobj["secure_password_key_enabled"];
+          }
+
+          if(ldapobj.hasOwnProperty("user_username_format_enabled")){
+            delete ldapobj["user_username_format_enabled"];
+            if(ldapobj.hasOwnProperty("user_username_format") && !ldapobj["user_username_format"]){
+              delete ldapobj["user_username_format"];
+            }
+            if(ldapobj.hasOwnProperty("user_domain_format") && !ldapobj["user_domain_format"]){
+              delete ldapobj["user_domain_format"];
+            }
+          }
+
           this.writeYMLFile(
             path.join(basedir, d["directory_users"]["connectors"]["ldap"]),
-            d["directory_users"]["connectors"]["ldap_data"],
+            ldapobj,
             callback);
           ok = true;
           break;

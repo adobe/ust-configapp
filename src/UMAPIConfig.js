@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, FormGroup, Label, Input, UncontrolledTooltip } from 'reactstrap';
+import { Button, InputGroupAddon, InputGroup, Form, FormGroup, Label, Input, UncontrolledTooltip } from 'reactstrap';
 
 export default class extends React.Component {
     constructor() {
@@ -7,6 +7,7 @@ export default class extends React.Component {
         this.state = {
             isonerror: false,
             alertmsg: "",
+            showpass: false,
             toptips: {
                 ent_settings: "You must specify all five of these settings. Please see Adobe I/O Console to determine the correct settings."
             }
@@ -59,6 +60,11 @@ export default class extends React.Component {
         e.preventDefault();
     }
 
+    handleShowPass = (e) => {
+        e.preventDefault();
+        this.setState((prev) => ({showpass: !prev.showpass}));
+    }
+
     render() {
         const ent = this.props.configData.adobe_users.connectors.umapi_data.enterprise;
 
@@ -83,7 +89,25 @@ export default class extends React.Component {
                     </FormGroup>
                     <FormGroup className="col-sm-6">
                         <Label>Client Secret</Label>
-                        <Input type="text" value={ent.client_secret} onChange={this.handleChange('client_secret')} placeholder="Enter Client Secret" size="sm" />
+                        <InputGroup key={0}>
+                                <Input 
+                                    type={ !this.state.showpass ? "password" : "text" } 
+                                    value={ent.client_secret} 
+                                    onChange={this.handleChange('client_secret')} 
+                                    placeholder="Enter Client Secret" 
+                                    size="sm" 
+                                    />
+                                <InputGroupAddon addonType="append">
+                                    <Button 
+                                        size="sm" 
+                                        style={{border:"1px solid lightgray", borderLeft: 0}} 
+                                        color="secondary" outline={true}
+                                        onClick={this.handleShowPass}
+                                        >
+                                        <span><i className={"fa " + (!this.state.showpass ? "fa-eye" : "fa-eye-slash")}></i></span>
+                                    </Button>
+                                </InputGroupAddon>
+                        </InputGroup>
                     </FormGroup>
                 </div>
                 <div className="row form-group">

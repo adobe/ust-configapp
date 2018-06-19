@@ -1,5 +1,5 @@
 import React from 'react';
-import { UncontrolledDropdown, DropdownMenu, DropdownToggle, InputGroup, DropdownItem, Form, FormGroup, Label, Input } from 'reactstrap';
+import { InputGroupAddon, UncontrolledDropdown, DropdownMenu, DropdownToggle, InputGroup, DropdownItem, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import * as Utils from './Utils';
 
 const g_allUsersFilterOptions = {
@@ -24,6 +24,7 @@ export default class extends React.Component {
         this.state = {             
             isonerror: false,
             alertmsg: "",
+            showpass: false,
             toptips: {
                 user_email_format: "user_email_format specifies how to construct a user's email address by combining constant strings with the values of specific directory attributes.",
                 group_filter_format: "group_filter_format specifies the format string used to get the distinguish name of a group given its common name (as specified in the directory to Adobe group mapping, or in the --users group \"name1,name2\" command-line argument)."
@@ -37,7 +38,7 @@ export default class extends React.Component {
         }
     }
 
-    handleChange = (elname, eltype)=> (e) => {
+    handleChange = (elname, eltype) => (e) => {
         if(eltype !== "check"){
             e.preventDefault();
         }
@@ -58,6 +59,17 @@ export default class extends React.Component {
         else if(eltype === "input"){
             const val = e.target.value;
             Utils.setobj(cd, elname, val);
+        }
+
+        if(cd.secure_password_key_enabled){
+            delete cd["password"];
+        } else{
+            delete cd["secure_password_key"];
+        }
+
+        if(!cd.user_username_format_enabled){
+            delete cd["user_username_format"];
+            delete cd["user_domain_format"];
         }
 
         this.setState({});
@@ -87,6 +99,11 @@ export default class extends React.Component {
         this.setState({alertmsg: alertmsg, isonerror: true});
     }
 
+    handleShowPass = (e) => {
+        e.preventDefault();
+        this.setState((prev) => ({showpass: !prev.showpass}));
+    }
+
     render() {
         const ldap = this.props.configData.directory_users.connectors.ldap_data;
         return (
@@ -97,17 +114,29 @@ export default class extends React.Component {
                         <Label>Username</Label>
                         <Input type="text" value={ldap.username} onChange={this.handleChange('username')} placeholder="Enter Username" size="sm" />
                     </FormGroup>
-                    { 
-                        ldap.secure_password_key ?
-                            <FormGroup className="col-sm-6">
-                                <Label>Secure Password Key</Label>
-                                <Input readOnly={false} type="text" value={ldap.secure_password_key} onChange={this.handleChange('secure_password_key')} placeholder="Enter Secure Pass. Key" size="sm" />
-                            </FormGroup> : 
-                            <FormGroup className="col-sm-6">
-                                <Label>Password</Label>
-                                <Input type="password" value={ldap.password} onChange={this.handleChange('password')} placeholder="Enter Password" size="sm" />
-                            </FormGroup>
-                    }
+                    <FormGroup className="col-sm-6">
+                        <Label>{!ldap.secure_password_key_enabled ? "Password" : "Secure Password Key" }</Label>
+                        { !ldap.secure_password_key_enabled ? 
+                            <InputGroup key={0}>
+                                <Input 
+                                    type={ !this.state.showpass ? "password" : "text" } 
+                                    value={ldap.password} 
+                                    onChange={this.handleChange('password')} 
+                                    placeholder="Enter Password" size="sm" />
+                                <InputGroupAddon addonType="append">
+                                    <Button 
+                                        size="sm" 
+                                        style={{border:"1px solid lightgray", borderLeft: 0}} 
+                                        color="secondary" outline={true}
+                                        onClick={this.handleShowPass}
+                                        >
+                                        <span><i className={"fa " + (!this.state.showpass ? "fa-eye" : "fa-eye-slash")}></i></span>
+                                    </Button>
+                                </InputGroupAddon>
+                            </InputGroup>
+                            : <Input key={1} type="text" value={ldap.secure_password_key} onChange={this.handleChange('secure_password_key')} placeholder="Enter Secure Pass. Key" size="sm" />
+                        }
+                    </FormGroup>
                     <FormGroup className="col-sm-6">
                         <Label>Host</Label>
                         <Input type="text" value={ldap.host} onChange={this.handleChange('host')} placeholder="Enter Host" size="sm" />
@@ -119,12 +148,36 @@ export default class extends React.Component {
                 </div>
                 <div className="row form-group">
                     <legend>Advanced <small className="text-muted">Identifier, filters</small></legend>
-                    <FormGroup className="col-sm-12">
+                    <FormGroup className="col-sm-6">
                         <Label>User Identifier</Label>
                         <Input type="text" value={ldap.user_email_format} onChange={this.handleChange('user_email_format')} placeholder="Default Identifier Applied {mail}" size="sm" />
-                        <Label>You can use <i>userPrincipalName</i> as user identifier but it should represent a live email address</Label>
+                        <Label>Optional: <i>{"{" + "userPrincipalName" + "}" }</i> as user identifier</Label>
                     </FormGroup>
-                    <FormGroup className="col-md-12">
+                    <FormGroup className="col-sm-6" style={{marginTop:15}}>
+                        <Label check size="sm" style={{marginLeft:20, height:20}}>
+                            <Input type="checkbox" checked={ldap.secure_password_key_enabled} onChange={this.handleChange('secure_password_key_enabled', 'check')}  />{' '}
+                            Enable Secure Password Storage
+                        </Label>
+                        <Label check size="sm" style={{marginLeft:20, height:20}}>
+                            <Input type="checkbox" checked={ldap.user_username_format_enabled} onChange={this.handleChange('user_username_format_enabled', 'check')}  />{' '}
+                            Enable Username Format (for username based login settings)
+                        </Label>
+                    </FormGroup>
+                    {
+                        ldap.user_username_format_enabled ?
+                        <FormGroup className="col-sm-6">
+                            <Label>Username Format</Label>
+                            <Input type="text" value={ldap.user_username_format} onChange={this.handleChange('user_username_format')} placeholder="Enter Username Format" size="sm" />
+                        </FormGroup> : null
+                    }
+                    { 
+                        ldap.user_username_format_enabled ?
+                        <FormGroup className="col-sm-6">
+                            <Label>Domain Format</Label>
+                            <Input type="text" value={ldap.user_domain_format} onChange={this.handleChange('user_domain_format')} placeholder="Enter Domain Format" size="sm" />
+                        </FormGroup>: null 
+                    }                   
+                    <FormGroup className="col-md-12" style={{marginTop: 7}}>
                         <Label>LDAP Filter - keep variables {"{group}"} and {"{group_dn}"} </Label>
                         <InputGroup>
                             <UncontrolledDropdown addonType="prepend"> 
