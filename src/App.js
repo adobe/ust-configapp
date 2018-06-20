@@ -96,8 +96,13 @@ export default class extends Component {
       }
       else if (s.selected === 3) {
         if (dusers.default_country_code && dusers.user_identity_type
-          && dusers.groups.length > 0 && cd.limits.max_adobe_only_users > 0) {
-          isok = true;
+          && cd.limits.max_adobe_only_users > 0) {
+          if(dusers.groups.length === 0){
+            isok = window.confirm("No groups mappings are defined. Do you still like to continue?");
+          }
+          else{
+            isok = true;
+          }
         }
       }
 
@@ -305,11 +310,16 @@ export default class extends Component {
       d["directory_users"]["connectors"]["ldap_data"] = ldapdoc;
 
       // process empty adobe user group mappings (replace None for empty item mapping) to help round-trip save
-      d['directory_users']['groups'].forEach(e => {
+      let groups = d['directory_users']['groups'];
+      if(!groups){
+        groups = [];
+      }
+      groups.forEach(e => {
         if (!e["adobe_groups"]) {
           e["adobe_groups"] = [""];
         }
       });
+      d['directory_users']['groups'] = groups;
 
       this.setState({
         configData: d,
@@ -363,11 +373,13 @@ export default class extends Component {
           delete d["directory_users"]["connectors"]["ldap_data"];
 
           // process empty adobe user group mappings (replace empty item for None mapping) to help round-trip save
-          d['directory_users']['groups'].forEach(e => {
+          const groups = d['directory_users']['groups'];
+          groups.forEach(e => {
             if (e["adobe_groups"].every(k => !k)) {
               e["adobe_groups"] = null;
             }
           });
+          d['directory_users']['groups'] = groups.length > 0 ? groups : null;
 
           this.writeYMLFile(configFile, d, callback);
           ok = true;
