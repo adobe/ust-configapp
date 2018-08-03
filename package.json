@@ -1,0 +1,61 @@
+{
+  "name": "ust-configapp",
+  "description": "Adobe User Sync Tool Configuration Wizard",
+  "author": "Adobe Systems Incorporated",
+  "version": "1.0.1",
+  "private": true,
+  "dependencies": {
+    "availity-reactstrap-validation": "^1.4.3",
+    "bootstrap": "^4.0.0-beta.2",
+    "font-awesome": "^4.7.0",
+    "immutability-helper": "^2.6.4",
+    "jquery": "^3.2.1",
+    "js-yaml": "^3.12.0",
+    "popper.js": "^1.12.9",
+    "progress-tracker": "^1.4.0",
+    "react": "16.0.0",
+    "react-dom": "16.0.0",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.0.17",
+    "react-transition-group": "1.2.0",
+    "reactstrap": "^5.0.0-beta"
+  },
+  "homepage": "./",
+  "main": "public/electron.js",
+  "scripts": {
+    "start": "nf start -p 3000",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "electron-start": "node src/electron-wait-react",
+    "react-start": "react-scripts start",
+    "pack": "electron-builder build --dir",
+    "dist": "npm run build && electron-builder build",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "productName": "Adobe UST Configuration App",  
+    "appId": "com.github.adobe.ustapp",
+    "artifactName":"${productName}.${ext}",
+	  "win": {
+      "target": "portable",
+      "publisherName":"Adobe Systems Incorporated"
+    },
+    "directories": {
+      "buildResources": "public"
+    },
+    "portable": {
+      "requestExecutionLevel": "admin"
+    },
+    "extraResources": [
+      "config-handler/dist"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^2.0.2",
+    "electron-builder": "^20.15.1",
+    "foreman": "^2.0.0"
+  }
+}
