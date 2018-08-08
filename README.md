@@ -53,4 +53,4 @@ yarn dist
 
 ## Dev Notes
 
-Developement require [NodeJS](https://nodejs.org/en/). Current release is test and working for Windows. Other operating systems support will be added soon.
+Developement require [NodeJS](https://nodejs.org/en/). Current release is tested and working for Windows. Other operating systems support will be added soon.
