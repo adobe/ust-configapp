@@ -21,6 +21,9 @@ const path = require('path')
 const url = require('url')
 const os = require('os')
 const child_process = require('child_process')
+const Menu = electron.Menu
+const dialog = electron.dialog
+const shell = electron.shell
 
 /*************************************************************
  * electron process
@@ -34,16 +37,48 @@ function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 800, height: 600, icon: path.join(__dirname, 'favicon.ico')})
 
-// load the index.html of the app.
-const startUrl = process.env.ELECTRON_START_URL || url.format({
-    pathname: path.join(__dirname, '/../build/index.html'),
-    protocol: 'file:',
-    slashes: true
-});
-mainWindow.loadURL(startUrl);
+  // load the index.html of the app.
+  const startUrl = process.env.ELECTRON_START_URL || url.format({
+      pathname: path.join(__dirname, '/../build/index.html'),
+      protocol: 'file:',
+      slashes: true
+  });
+  mainWindow.loadURL(startUrl);
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
+
+  var template = [
+    {
+      label: "File",
+      submenu: [
+          { label: "Exit", role: "quit" }
+      ]
+    }, 
+    {
+    label: "Edit",
+    submenu: [
+        { label: "Cut", accelerator: "CmdOrCtrl+X", role: "cut" },
+        { label: "Copy", accelerator: "CmdOrCtrl+C", role: "copy" },
+        { label: "Paste", accelerator: "CmdOrCtrl+V", role: "paste" }
+    ]},
+    {
+      label: "Help",
+      submenu: [
+        { label: "User Sync Tool Documentation", click: function(){ shell.openExternal('https://adobe-apiplatform.github.io/user-sync.py/en/user-manual/') } },
+        { label: "About", role: "about", click: function() {        
+            dialog.showMessageBox( {
+              type: 'none',
+              icon: path.join(__dirname, 'favicon.ico'),
+              message: 'Adobe User Sync Tool Configuration Wizard' + '\rVersion:' + app.getVersion(),
+              buttons: []
+            }); 
+          } }
+      ]
+    },
+  ];
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
