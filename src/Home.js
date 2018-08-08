@@ -72,9 +72,9 @@ export default class extends React.Component {
                                     <hr/>
                                     <legend style={{marginLeft:-10}} >Before you continue <small>check following are available</small></legend>
                                     <ol className="rounded-list" style={{paddingLeft: 15}}>
-                                        <li><a href="#" onClick={()=> openexternal('https://console.adobe.io')}>Get User Management API token from <span style={{color:'blue'}}>Adobe.io</span></a></li>
-                                        <li><a href="#">Configure the Enterprise Directory (readonly LDAP) service account </a></li>
-                                        <li><a href="#">Define the User Identity Type & User Groups Mappings for User Sync</a></li>
+                                        <li><a href="#" onClick={()=> openexternal('https://adobe-apiplatform.github.io/user-sync.py/en/success-guide/setup_adobeio.html')}>Get User Management API token from <span style={{color:'blue'}}>Adobe.io</span></a></li>
+                                        <li><a href="#" onClick={()=> openexternal('https://adobe-apiplatform.github.io/user-sync.py/en/success-guide/identify_server.html')}>Setup a readonly LDAP service account on your Enterprise Directory</a></li>
+                                        <li><a href="#" onClick={()=> openexternal('https://adobe-apiplatform.github.io/user-sync.py/en/success-guide/layout_products.html')}>Define the User Identity Type & User Groups Mappings for User Sync</a></li>
                                     </ol>
                                     <legend style={{marginLeft:-10}}>Configuration File <small>select user-sync-config.yml</small></legend>
                                     <p>
