@@ -2,7 +2,7 @@
   "name": "ust-configapp",
   "description": "Adobe User Sync Tool Configuration Wizard",
   "author": "Adobe Systems Incorporated",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "dependencies": {
     "availity-reactstrap-validation": "^1.4.3",
