@@ -91,7 +91,14 @@ export default class extends Component {
         }
       }
       else if (s.selected === 3) {
-        if (dusers.default_country_code && dusers.user_identity_type
+        if(!dusers.default_country_code){
+          isok = window.confirm("No default country code defined. Do you still like to continue?");
+        }
+        else{
+          isok = true;
+        }
+        
+        if (isok && dusers.user_identity_type
           && cd.limits.max_adobe_only_users > 0) {
           if (dusers.groups.length === 0) {
             isok = window.confirm("No groups mappings are defined. Do you still like to continue?");

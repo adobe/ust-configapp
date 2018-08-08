@@ -149,6 +149,10 @@ export default class {
                     });
                     d['directory_users']['groups'] = groups.length > 0 ? groups : null;
 
+                    if(!d['directory_users']['default_country_code']){
+                        d['directory_users']['default_country_code'] = null;
+                    }
+
                     this.writeYMLFile(configFile, d, callback);
                     ok = true;
                     break;
