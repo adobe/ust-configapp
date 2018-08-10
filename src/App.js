@@ -226,7 +226,7 @@ export default class extends Component {
               </div>
               <br />
               <div>
-                <span>Go to <a href="#" onClick={() => openexternal('https://adobe-apiplatform.github.io/user-sync.py/en/')}>GitHub</a> for more information</span>
+                <span>See the <a href="#" onClick={() => openexternal('https://adobe-apiplatform.github.io/user-sync.py/en/')}>docs</a> for more details</span>
               </div>
             </Col>
           </Row>
