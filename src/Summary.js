@@ -13,6 +13,7 @@ written permission of Adobe.
 
 import React from 'react';
 import { Container, Row, Col } from 'reactstrap';
+import {openexternal} from './Utils';
 const spawn = window.require('child_process').spawn; 
 
 export default class extends React.Component {
@@ -48,10 +49,10 @@ export default class extends React.Component {
                                     <hr />
                                     <legend style={{marginLeft:-10}} >Next steps:</legend>
                                     <ol className="rounded-list" style={{paddingLeft:15}}>
-                                        <li><a href="#">Identify a few pilot test users and complete pilot testing</a></li>
-                                        <li><a href="#">Add all entitiled users to appropriate directory groups</a></li>
-                                        <li><a href="#">Validate results in <i>test-mode</i> before running the tool outside of test-mode</a></li>
-                                        <li><a href="#">Setup a <i>scheduled task</i> for ongoing execution of User Sync</a></li>
+                                        <li><a href="#" onClick={()=> openexternal('https://adobe-apiplatform.github.io/user-sync.py/en/success-guide/test_run.html')}>Identify a few pilot test users and complete pilot testing</a></li>
+                                        <li><a href="#" onClick={()=> openexternal('https://adobe-apiplatform.github.io/user-sync.py/en/success-guide/layout_orgs.html')}>Add all entitiled users to appropriate directory groups</a></li>
+                                        <li><a href="#" onClick={()=> openexternal('https://adobe-apiplatform.github.io/user-sync.py/en/success-guide/test_run.html')}>Validate results in <i>test-mode</i> before running the tool outside of test-mode</a></li>
+                                        <li><a href="#" onClick={()=> openexternal('https://adobe-apiplatform.github.io/user-sync.py/en/success-guide/scheduling.html')}>Setup a <i>scheduled task</i> for ongoing execution of User Sync</a></li>
                                     </ol>
                                     <legend style={{marginLeft:-10}} >Run in test-mode</legend>
                                     <div>
