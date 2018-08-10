@@ -27,8 +27,9 @@ The wizard supports:
 - Enable reading nested group information 
 - Enable secure password storage for ldap password
 
-You can still add additional keys/edit current key values manually in the configuration files.
-Please note, any yml comments and keys order will not be saved during round-trip save 
+You can still add additional keys/edit current key values manually in the configuration files. 
+
+Please note, any yml comments and keys order will not be saved during round-trip save, however, the wizard creates a initial backup of config before it updates the configurations.
 
 ## Installation
 
