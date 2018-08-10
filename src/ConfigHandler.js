@@ -29,7 +29,7 @@ export default class {
             fs.copyFileSync(configFile, bakfile);
         }
 
-        const ymldata = yaml.dump(d, { lineWidth: -1 });
+        const ymldata = yaml.dump(d, { lineWidth: -1, noCompatMode: true });
         fs.writeFile(configFile, ymldata, 'utf8', (err) => {
             if (err) {
                 return console.log(err);
