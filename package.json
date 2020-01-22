@@ -14,7 +14,7 @@
     "popper.js": "^1.12.9",
     "progress-tracker": "^1.4.0",
     "react": "16.0.0",
-    "react-dom": "16.0.0",
+    "react-dom": ">=16.0.1",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.0.17",
@@ -36,12 +36,12 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {
-    "productName": "Adobe UST Configuration App",  
+    "productName": "Adobe UST Configuration App",
     "appId": "com.github.adobe.ustapp",
-    "artifactName":"${productName}.${ext}",
-	  "win": {
+    "artifactName": "${productName}.${ext}",
+    "win": {
       "target": "portable",
-      "publisherName":"Adobe Systems Incorporated"
+      "publisherName": "Adobe Systems Incorporated"
     },
     "directories": {
       "buildResources": "public"
@@ -56,6 +56,6 @@
   "devDependencies": {
     "electron": "^2.0.2",
     "electron-builder": "^20.15.1",
-    "foreman": "^2.0.0"
+    "foreman": ">=3.0.1"
   }
 }
