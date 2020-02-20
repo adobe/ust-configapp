@@ -35,11 +35,12 @@ export default class extends React.Component {
         if(elname.indexOf("txt_") !== -1){
             ap[elname] = e.target.value;
         }
-        else if(elname.indexOf("fi_") !== -1){
+        else if(elname.indexOf("fi_") !== -1 && e.target.files.length){
             ap[elname] = e.target.files[0].path;
 
             if(this.props.onLoadConfig)
                 this.props.onLoadConfig();
+
         }
 
         this.setState({});
@@ -75,19 +76,17 @@ export default class extends React.Component {
                                         <li><a href="#" onClick={()=> openexternal('https://adobe-apiplatform.github.io/user-sync.py/en/success-guide/setup_adobeio.html')}>Get User Management API token from <span style={{color:'blue'}}>Adobe.io</span></a></li>
                                         <li><a href="#" onClick={()=> openexternal('https://adobe-apiplatform.github.io/user-sync.py/en/success-guide/identify_server.html')}>Setup a readonly LDAP service account on your Enterprise Directory</a></li>
                                         <li><a href="#" onClick={()=> openexternal('https://adobe-apiplatform.github.io/user-sync.py/en/success-guide/layout_products.html')}>Define the User Identity Type & User Groups Mappings for User Sync</a></li>
-                                    </ol>
-                                    <legend style={{marginLeft:-10}}>Configuration File <small>select user-sync-config.yml</small></legend>
-                                    <p>
                                         { 
-                                            !configloaded ? 
-                                            <div>
-                                                <Input type="file" size="sm" defaultValue="" onChange={this.handleChange('fi_ust_conf_path')} accept=".yml" />
-                                            </div> : 
-                                            <div>
-                                                <span>{ap.fi_ust_conf_path}</span>&nbsp;<a onClick={this.onConfigView} href="#">View</a>
-                                            </div>
+                                            !configloaded ?
+                                            <li>
+                                                <a>Select your <i>user-sync-config.yml</i> configuration file to continue</a>
+                                                <Input type="file"  defaultValue="" onChange={this.handleChange('fi_ust_conf_path')} accept=".yml" />
+                                            </li> :
+                                            <li>
+                                                <a onClick={this.onConfigView} href="#">View configuration file:&nbsp;<span>{ap.fi_ust_conf_path}</span></a>
+                                            </li>
                                         }
-                                    </p>
+                                    </ol>
                                 </div>
                             </Col>
                         </Row>                

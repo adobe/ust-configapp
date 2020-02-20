@@ -33,7 +33,8 @@ export default class extends Component {
       isonerror: false,
       alertmsg: "",
       selected: 0,
-      cancontinue: false,
+      cancontinue: true,
+      configFileChosen: false,
       configData: {},
       appData: {
         fi_ust_conf_path: null,
@@ -132,11 +133,18 @@ export default class extends Component {
       }
     }
     else {
-      this.setState(prevState => ({
-        selected: prevState.selected < prevState.wizsteps.length - 1 ? ++prevState.selected : prevState.selected,
-        configview: false,
-        cancontinue: true
-      }));
+      if (!s.configFileChosen) {
+         alert ("Please select valid configuration file to continue");
+      }
+      else {
+        // check config one more time before moving forward
+        this.onLoadConfig();
+        this.setState(prevState => ({
+          selected: prevState.selected < prevState.wizsteps.length - 1 ? ++prevState.selected : prevState.selected,
+          configview: false,
+          cancontinue: true
+        }));
+      }
     }
   }
 
@@ -153,13 +161,13 @@ export default class extends Component {
 
   onLoadConfig = () => {
     configHandler.loadConfigFile(this.state.appData.fi_ust_conf_path, (data, isonerr) => {
-      if (isonerr) {
-        alert("Failed to load configurations.");
-      } else {
+      if (!isonerr) {//
         this.setState({
           configData: data,
-          cancontinue: true
+          cancontinue: true,
+          configFileChosen: true,
         });
+        return false;
       }
     });
   }
