@@ -93,8 +93,9 @@ export default class {
         } catch (e) {
             console.log(e);
             
+            // return error to show and give user better understanding what is going wrong with the YAML config
             if(callback){
-                callback(null, true);
+                callback(null, e);
             }            
         }
     }
