@@ -160,8 +160,11 @@ export default class extends Component {
   }
 
   onLoadConfig = () => {
-    configHandler.loadConfigFile(this.state.appData.fi_ust_conf_path, (data, isonerr) => {
-      if (!isonerr) {//
+    configHandler.loadConfigFile(this.state.appData.fi_ust_conf_path, (data, err) => {
+      if (err) {
+          alert(err);
+      }
+      else {
         this.setState({
           configData: data,
           cancontinue: true,

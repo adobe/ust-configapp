@@ -73,7 +73,7 @@ export default class {
             }
 
             d["adobe_users"]["connectors"]["umapi_data"] = umapidoc;
-            d["directory_users"]["connectors"]["ldap_data"] = ldapdoc; 
+            d["directory_users"]["connectors"]["ldap_data"] = ldapdoc;
 
             // process empty adobe user group mappings (replace None for empty item mapping) to help round-trip save
             let groups = d['directory_users']['groups'];
@@ -92,11 +92,10 @@ export default class {
             }
         } catch (e) {
             console.log(e);
-            // give user better understanding what is going wrong with the YAML config
-            alert(e);
             
+            // return error to show and give user better understanding what is going wrong with the YAML config
             if(callback){
-                callback(null, true);
+                callback(null, e);
             }            
         }
     }
