@@ -193,3 +193,34 @@ ol ol {
   border-radius: 2em;
   transition: all .3s ease-out;
 }
+
+.file-input {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.file-input-button {
+  vertical-align: top;
+  display: inline-block;
+}
+
+/* css for labels in home component */
+
+.file-input-label {
+  border: solid;
+  border-width: 1px;
+  border-color: rgba(179, 172, 172, 0.5);
+  border-left: 0;
+  padding: 2px 5px 2px 5px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 70%;
+  display: inline-block;
+}
+
+.file-input-view {
+  vertical-align: top;
+  display: inline-block;
+  margin-top: 4px;
+}

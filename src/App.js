@@ -23,6 +23,7 @@ import Summary from './Summary';
 import ConfigHandler from './ConfigHandler';
 import Globals from './Globals';
 import { openexternal } from './Utils';
+const fs = window.require('fs');
 const configHandler = new ConfigHandler();
 
 export default class extends Component {
@@ -36,7 +37,7 @@ export default class extends Component {
       cancontinue: false,
       configData: {},
       appData: {
-        fi_ust_conf_path: null,
+        fi_ust_conf_path: 'No file chosen',
         countries: Globals.Countries
       },
       wizsteps: [
@@ -46,7 +47,10 @@ export default class extends Component {
         { idx: 3, title: "User Sync Settings", icon: "fa-cogs" },
         { idx: 4, title: "Summary & Next Steps", icon: "fa-check-circle" }
       ],
-      helpstring: ""
+      helpstring: "",
+      wrongFile: false, // If wrong file chosen wrongFile set to true and set dyanamic label in Home compoenent set to fileSelectPlaceHolder below
+      fileSelectPlaceHolder: "No file chosen", // Placeholder title for dynamic label in Home component if wrong file selected shows no file chosen
+      showBackOnView: false
     }
   }
 
@@ -143,7 +147,8 @@ export default class extends Component {
   onBack = () => {
     this.setState(prevState => ({
       selected: prevState.selected > 0 ? --prevState.selected : prevState.selected,
-      configview: false
+      configview: false,
+      showBackOnView: false
     }));
   }
 
@@ -152,19 +157,32 @@ export default class extends Component {
   }
 
   onLoadConfig = () => {
-    configHandler.loadConfigFile(this.state.appData.fi_ust_conf_path, (data, isonerr) => {
+    if(this.state.appData.fi_ust_conf_path) {
+      configHandler.loadConfigFile(this.state.appData.fi_ust_conf_path, (data, isonerr) => {
+      // If there is an error loading we show user alert and then we set wrongFile to true which resets the dynamic label in the home component, also resets config data so we don't store
+      // in correct data and disables the continue button until correct file selected. Else sets correct config data, enables continue button and resets dynamic label in home component to show correct file path
       if (isonerr) {
-        alert("Failed to load configurations.");
+        alert("Looks like there was a problem loading the user sync configuration file. Please make sure you are selecting \"user-sync-config.yml\" as your configuration file");
+        this.setState(prevState => ({
+          wrongFile: true,
+          configData: {}, 
+          cancontinue: false
+        }));
       } else {
         this.setState({
           configData: data,
-          cancontinue: true
+          cancontinue: true,
+          wrongFile: false
         });
       }
-    });
+    });}
   }
 
   onSaveConfig = () => {
+  }
+
+  showBack = () => {
+    this.setState({showBackOnView: true});
   }
 
   render() {
@@ -210,7 +228,16 @@ export default class extends Component {
                       {this.state.alertmsg}
                     </Alert>
                     {
-                      s.selected === 0 ? <Home showHelp={this.showHelp} onLoadConfig={this.onLoadConfig} configData={s.configData} appData={s.appData} /> :
+                      s.selected === 0 ? <Home 
+                        showHelp={this.showHelp} 
+                        onLoadConfig={this.onLoadConfig}
+                        showBack={this.showBack} 
+                        configData={s.configData} 
+                        appData={s.appData} 
+                        wrongFile={s.wrongFile} 
+                        fileSelectPlaceHolder={s.fileSelectPlaceHolder} 
+                        showBackOnView={s.showBackOnView}
+                      /> :
                         s.selected === 1 ? <UMAPIConfig showHelp={this.showHelp} configData={s.configData} appData={s.appData} /> :
                           s.selected === 2 ? <LDAPConfig showHelp={this.showHelp} configData={s.configData} appData={s.appData} /> :
                             s.selected === 3 ? <USTConfig showHelp={this.showHelp} configData={s.configData} appData={s.appData} /> :
@@ -237,7 +264,7 @@ export default class extends Component {
               {s.selected === 0 ? "Continue" : s.selected === s.wizsteps.length - 1 ? "Close" : "Save & Continue"}
             </Button>
             {
-              s.selected !== 0 ?
+              s.selected !== 0 || s.showBackOnView === true ?
                 <Button color="link" size="sm" onClick={this.onBack}>Back</Button> : null
             }
           </div>
@@ -261,5 +288,18 @@ export default class extends Component {
     }
     cd.directory_users.groups = groups_new;
     return cd;
+  }
+
+  // compoenentDidMount - this life cycle method sets the default file path to fi_ust_conf_path after it checks if the file exists. If the file does not exist it does nothing
+  componentDidMount() {
+    let path = 'C:\\Program Files\\Adobe\\Adobe User Sync Tool\\user-sync-config.yml';
+    if (fs.existsSync(path)) {
+      this.setState(prevState => ({
+        appData: {
+          ...prevState.appData,
+          fi_ust_conf_path: path
+        }
+      }));
+    }
   }
 }  
