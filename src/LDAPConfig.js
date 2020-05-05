@@ -34,7 +34,9 @@ const g_groupMemberFilterOptions = {
 export default class extends React.Component {
     constructor() {
         super();
-        this.state = {             
+        this.state = {    
+            ldap: '',
+            host: '',        
             isonerror: false,
             alertmsg: "",
             showpass: false,
@@ -55,12 +57,10 @@ export default class extends React.Component {
         if(eltype !== "check"){
             e.preventDefault();
         }
-        
         const cd = this.props.configData.directory_users.connectors.ldap_data;
         if(!eltype){
             eltype = "input";
         }
-
         if(eltype === "number"){
             const val = parseInt(e.target.value);
             Utils.setobj(cd, elname, val);
@@ -73,7 +73,6 @@ export default class extends React.Component {
             const val = e.target.value;
             Utils.setobj(cd, elname, val);
         }
-
         if(cd.secure_password_key_enabled){
             delete cd["password"];
         } else{
@@ -104,10 +103,34 @@ export default class extends React.Component {
 
         this.setState({});
     }
+
+    handleHost = (e)=>{
+        const newHost = e.target.value;
+        this.setState(prevState=> {
+            const ldapHost = this.props.configData.directory_users.connectors.ldap_data;
+            ldapHost.host = prevState.ldap + "://" + newHost;
     
+            return{
+                    host: newHost
+                }
+            })
+            }     
+
+    handleLdap = (e)=> {
+    const ldapSelect = e.target.value;
+    this.setState(prevState=> {
+        const ldapHost = this.props.configData.directory_users.connectors.ldap_data;
+        const ldap = ldapSelect + "://";
+        ldapHost.host = ldap + prevState.host;
+
+        return{
+                ldap: ldapSelect
+            }
+        })
+        }     
+
     handleSubmit = (e) => {
         e.preventDefault();
-        
         var alertmsg = "Invalid or incorrect information is provided.";
         this.setState({alertmsg: alertmsg, isonerror: true});
     }
@@ -151,8 +174,15 @@ export default class extends React.Component {
                         }
                     </FormGroup>
                     <FormGroup className="col-sm-6">
+                        <Label>Connection Protocol</Label>
+                        <Input type="select" value = {this.state.ldap} onChange={this.handleLdap} size="sm">
+                            <option>ldap</option>
+                            <option>ldaps</option>
+                        </Input>
+                    </FormGroup>
+                    <FormGroup className="col-sm-6">
                         <Label>Host</Label>
-                        <Input type="text" value={ldap.host} onChange={this.handleChange('host')} placeholder="Enter Host" size="sm" />
+                        <Input type="text" defaultValue = {this.state.host} onChange={this.handleHost} placeholder="Enter Host" size="sm" />
                     </FormGroup>
                     <FormGroup className="col-sm-6">
                         <Label>BASE_DN</Label>
@@ -247,5 +277,18 @@ export default class extends React.Component {
 
     componentDidMount() {
         this.showHelp("Setup read-only LDAP account on your Enterprise Directory and configure it here");
+        const ldap = this.props.configData.directory_users.connectors.ldap_data;
+        const hostArray = ldap.host.split('://');
+        console.log(hostArray[0]);
+        if (hostArray.length === 2)
+        {
+            this.setState({ldap: hostArray[0]});
+            this.setState({host: hostArray[1]});
+        }
+        else
+        {
+            this.setState({ldap: "ldap://"});
+            this.setState({host: "example.com"});
+        }
     }
 }
