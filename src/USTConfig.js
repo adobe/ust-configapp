@@ -22,7 +22,9 @@ export default class extends React.Component {
         this.state = {
             isonerror: false,
             alertmsg: "", 
-            editmapidx: -1
+            editmapidx: -1,
+            editdynamicmapidx: -1,
+            showDynamicMapping: false
         }
     }
 
@@ -137,6 +139,72 @@ export default class extends React.Component {
 
     handleAddGroup = (idx) => (e) => {
         e.preventDefault();        
+    }
+
+    // This function toggles showing or hiding the dynamic mapping inputs
+    showAdvancedGrouping = (e) => {
+        e.preventDefault();
+        this.setState({
+            showDynamicMapping: !this.state.showDynamicMapping
+        });
+    }
+
+    // This function show the inputs when the user clicks add pattern also puts the inputs in the correct descending order
+    handleAddDynamicMapping = (e) => {
+        const cd = this.props.configData;
+        const s = this.state;
+        if(s.editdynamicmapidx === -1) {
+            const mp = { 
+                source: "", 
+                target: ""
+            };
+
+            cd.directory_users.additional_groups.push(mp);            
+            this.setState(prevState => ({
+                editdynamicmapidx: cd.directory_users.additional_groups.length-1
+            }));
+        }
+    }
+
+    // This function handles the inputs for target and source and then adds them to the config data state
+    handleDynamicChangeMap = (elname, idx) => (e) => {
+        e.preventDefault();
+        const cd = this.props.configData;
+        const mp = cd.directory_users.additional_groups[this.state.editdynamicmapidx];
+        if (elname === "MAP.source") {
+            mp.source = e.target.value;
+            this.setState({});
+        }
+        else if (elname === "MAP.target") {
+            mp.target = e.target.value;
+            this.setState({});
+        }
+    }
+
+    // This function handles the switch from input view back to list view
+    handleSaveDynamicMapping = (e) => {
+        e.preventDefault();
+        this.setState({
+            editdynamicmapidx: -1
+        });
+    }
+
+    // This function handles the switch from list view to input view to allow the user to edit their dynamic groupings
+    handleEditDynamicMapping = (idx) => (e) => {
+        e.preventDefault();
+        this.setState({
+            editdynamicmapidx: idx
+        });
+    }
+
+    // This function handles the removing of dynamic grouping by using the splice function and removes them from configData object
+    handleRemoveDynamicMapping = (idx) => (e) => {
+        e.preventDefault();
+        const cd = this.props.configData;
+        cd.directory_users.additional_groups.splice(idx, 1);
+        this.setState({
+            editdynamicmapidx: -1
+        });
     }
     
     render() {
@@ -268,6 +336,103 @@ export default class extends React.Component {
                     </FormGroup>
                 </div>
                 <div className="row form-group">
+                    <div>
+                        <legend>Dynamic Grouping <small>(optional)</small>{!s.showDynamicMapping ?
+                            <a href="#" style={{ marginTop: 5, marginLeft: 5, verticalAlign: "top" }} onClick={this.showAdvancedGrouping}>Create</a> :
+                            <a href="#" style={{ marginTop: 5, marginLeft: 5, verticalAlign: "top" }} onClick={this.showAdvancedGrouping}>Hide</a>
+                        }</legend>
+                    </div>
+                    {s.showDynamicMapping ?
+                        <FormGroup className="col-sm-12">
+                            <ListGroup>
+                                <div className="container" style={{ padding: 0, margin: 0 }}>
+                                    <div className="row">
+                                        <div className="col-sm-5">
+                                            <Label>Source</Label>
+                                        </div>
+                                        <div className="col-sm-7">
+                                            <Label style={{ marginLeft: 16 }}>Target</Label>
+                                        </div>
+                                    </div>
+                                    {
+                                        cd.directory_users.additional_groups.length === 0 ?
+                                            <ListGroupItem className="justify-content-between">
+                                                <div className="row">
+                                                    <div className="col-sm-12">
+                                                        <span style={{ color: "gray", fontSize: "0.75rem" }}>No Dynamic Groupings found. Click 'Add New Pattern'.</span>
+                                                    </div>
+                                                </div>
+                                            </ListGroupItem> :
+                                            cd.directory_users.additional_groups.map((mp, idx) =>
+                                                s.editdynamicmapidx === idx ?
+                                                    <ListGroupItem key={idx} className="justify-content-between" color="warning">
+                                                        <div className="row">
+                                                            <div className="col-sm-5">
+                                                                <input
+                                                                    style={{ borderRadius: 0, marginLeft: -3 }}
+                                                                    type="text"
+                                                                    placeholder="acl-(.+)"
+                                                                    value={mp.source}
+                                                                    onChange={this.handleDynamicChangeMap('MAP.source')}
+                                                                />
+                                                            </div>
+                                                            <div className="col-sm-6">
+                                                                <div>
+                                                                    <span style={{ marginRight: 10 }}><i className="fa fa-arrow-right"></i></span>
+                                                                    <span>
+                                                                        <input
+                                                                            style={{ borderRadius: 0 }}
+                                                                            type="text"
+                                                                            placeholder="aem-(\1)"
+                                                                            value={mp.target}
+                                                                            onChange={this.handleDynamicChangeMap('MAP.target')}
+                                                                        />
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-sm-1 text-right">
+                                                                <a href="#" onClick={this.handleSaveDynamicMapping}>
+                                                                    <i className="fa fa-floppy-o"></i>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </ListGroupItem> :
+                                                    <ListGroupItem key={idx} className="justify-content-between">
+                                                        <div className="row">
+                                                            <div className="col-sm-5">
+                                                                {mp.source}
+                                                            </div>
+                                                            <div className="col-sm-6">
+                                                                <span style={{ marginRight: 10 }}><i className="fa fa-arrow-right"></i></span>
+                                                                <span>{mp.target}</span>
+                                                            </div>
+                                                            <div className="col-sm-1 text-right">
+                                                                <UncontrolledDropdown size="sm">
+                                                                    <DropdownToggle tag="a" href="#">
+                                                                        <i className="fa fa-ellipsis-h"></i>
+                                                                    </DropdownToggle>
+                                                                    <DropdownMenu style={{ fontSize: "0.85rem" }}>
+                                                                        <DropdownItem onClick={this.handleEditDynamicMapping(idx)}>
+                                                                            <i className="fa fa-pencil-square-o" style={{ height: 16, marginTop: 1 }}></i>&nbsp;Edit
+                                                                        </DropdownItem>
+                                                                        <DropdownItem onClick={this.handleRemoveDynamicMapping(idx)}>
+                                                                            <i className="fa fa-trash-o" style={{ height: 16 }}></i>&nbsp;Delete
+                                                                        </DropdownItem>
+                                                                    </DropdownMenu>
+                                                                </UncontrolledDropdown>
+                                                            </div>
+                                                        </div>
+                                                    </ListGroupItem>
+                                            )
+                                    }
+                                </div>
+                            </ListGroup>
+                            <a href="#" style={{ marginTop: 5, marginLeft: 5 }} onClick={this.handleAddDynamicMapping}><i className="fa fa-plus-circle"></i>&nbsp;Add New Pattern</a>
+                        </FormGroup> :
+                        null
+                    }
+                </div>
+                <div className="row form-group">
                     <legend>Advanced <small className="text-muted">limits, logging, exclude users</small></legend>
                     <FormGroup className="col-sm-6">
                         <Label>Limit</Label>
@@ -301,5 +466,6 @@ export default class extends React.Component {
 
     componentDidMount() {
         this.showHelp("Sync settings of user groups mappings and other information");
+        this.setState({showDynamicMapping: this.props.configData.directory_users.additional_groups.length >= 1})
     }
 }
