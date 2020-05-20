@@ -86,6 +86,11 @@ export default class {
                 }
             });
             d['directory_users']['groups'] = groups;
+            // Initializes additional_groups in yaml file since on install it does not exist
+            let additional_groups = d['directory_users']['additional_groups']
+            if (!additional_groups) {
+                d['directory_users']['additional_groups'] = [];
+            }
 
             if(callback){
                 callback(d, false);
