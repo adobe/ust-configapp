@@ -175,7 +175,7 @@ export default class extends React.Component {
                     </FormGroup>
                     <FormGroup className="col-sm-6">
                         <Label>Connection Protocol</Label>
-                        <Input type="select" value = {this.state.ldap} onChange={this.handleLdap} size="sm">
+                        <Input style = {{width: "50%"}}type="select" value = {this.state.ldap} onChange={this.handleLdap} size="sm">
                             <option>ldap</option>
                             <option>ldaps</option>
                         </Input>
@@ -279,7 +279,6 @@ export default class extends React.Component {
         this.showHelp("Setup read-only LDAP account on your Enterprise Directory and configure it here");
         const ldap = this.props.configData.directory_users.connectors.ldap_data;
         const hostArray = ldap.host.split('://');
-        console.log(hostArray[0]);
         if (hostArray.length === 2)
         {
             this.setState({ldap: hostArray[0]});
