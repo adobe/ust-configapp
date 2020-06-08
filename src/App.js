@@ -30,6 +30,7 @@ export default class extends Component {
     super();
 
     this.state = {
+      ispercent: false,
       isonerror: false,
       alertmsg: "",
       selected: 0,
@@ -48,6 +49,27 @@ export default class extends Component {
       ],
       helpstring: ""
     }
+  }
+
+  handleLimit = () => {
+    this.setState({ispercent: !this.state.ispercent})
+  }
+
+  setLimit = () =>{
+        this.setState((prevState) => {
+          let limitcheck = prevState.configData.limits.max_adobe_only_users;
+          let  percentcheck = limitcheck.split("%");
+          return {
+            ...prevState,
+            configData:{
+              ...prevState.configData,
+            limits:{
+              ...prevState.configData.limits,
+              max_adobe_only_users:   Number.parseInt(percentcheck[0]),
+            },},
+            ispercent: true
+          };
+        })
   }
 
   onAlertDismiss = () => {
@@ -105,6 +127,15 @@ export default class extends Component {
           }
           else {
             isok = true;
+            if(this.state.ispercent === true){
+              if(cd.limits.max_adobe_only_users <= 100){
+                cd.limits.max_adobe_only_users += "%"
+              }
+              else{
+                isok = false;
+              }
+              
+            }
           }
         }
       }
@@ -126,6 +157,9 @@ export default class extends Component {
           cancontinue: false
         }));
         console.log("Saving data...");
+      }
+      else if(this.state.ispercent === true){
+        alert("Percent value greater than 100")
       }
       else {
         alert("Invalid information provided.\r\nPlease fill in all required information.")
@@ -213,7 +247,7 @@ export default class extends Component {
                       s.selected === 0 ? <Home showHelp={this.showHelp} onLoadConfig={this.onLoadConfig} configData={s.configData} appData={s.appData} /> :
                         s.selected === 1 ? <UMAPIConfig showHelp={this.showHelp} configData={s.configData} appData={s.appData} /> :
                           s.selected === 2 ? <LDAPConfig showHelp={this.showHelp} configData={s.configData} appData={s.appData} /> :
-                            s.selected === 3 ? <USTConfig showHelp={this.showHelp} configData={s.configData} appData={s.appData} /> :
+                            s.selected === 3 ? <USTConfig showHelp={this.showHelp} handleLimit={this.handleLimit} checkLimit={this.checkLimit}setLimit={this.setLimit} configData={s.configData} appData={s.appData} ispercent={s.ispercent} /> :
                               <Summary showHelp={this.showHelp} configData={s.configData} />
                     }
                   </Col>
