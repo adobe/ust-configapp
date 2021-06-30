@@ -1,3 +1,6 @@
+# UST Config Wizard has now moved to https://github.com/adobe-dmeservices/ust-configapp-v2
+<p/>
+
 # Adobe User Sync Tool Configuration Wizard
 This is User Sync tool configuration wizard. It helps configure the User Sync tool with User Management API (Adobe.io), Enterprise Directory (LDAP) and sync settings.
 
