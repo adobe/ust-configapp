@@ -75,8 +75,8 @@ export default class extends React.Component {
             Utils.setobj(cd, elname, val);
         }
         else if(eltype === "input"){
-            const val = e.target.value;
-            Utils.setobj(cd, elname, val);
+                const val = e.target.value;
+                Utils.setobj(cd, elname, val);
         }
         else if(eltype === "inputlist"){
             let val = e.target.value;
@@ -138,7 +138,7 @@ export default class extends React.Component {
     handleAddGroup = (idx) => (e) => {
         e.preventDefault();        
     }
-    
+
     render() {
         const s = this.state;
         const cd = this.props.configData;
@@ -270,9 +270,17 @@ export default class extends React.Component {
                 <div className="row form-group">
                     <legend>Advanced <small className="text-muted">limits, logging, exclude users</small></legend>
                     <FormGroup className="col-sm-6">
-                        <Label>Limit</Label>
+                        {!this.props.ispercent? <Label>Limit</Label> : <Label>Limit %</Label>}
                         <Input type="number" value={cd.limits.max_adobe_only_users} onChange={this.handleChange('limits.max_adobe_only_users', 'number')} placeholder="Limit" size="sm" />
-                    </FormGroup>
+                        <Label check size="sm" style={{marginLeft:30}}>
+                        <Input type="radio" checked={this.props.ispercent===false} onChange={this.props.handleLimit}/>
+                           <Label style = {{fontSize: "16px"}}>Numeric</Label>
+                        </Label>
+                        <Label check size="sm" style={{marginLeft:30}}>
+                            <Input type="radio"  checked={this.props.ispercent===true} onChange={this.props.handleLimit}/>
+                            <Label style = {{fontSize: "16px"}}>Percentage</Label> 
+                        </Label>
+                    </FormGroup> 
                     <FormGroup className="col-sm-6">
                         <Label>Log Level</Label>
                         <Input type="select" value={cd.logging.file_log_level} onChange={this.handleChange('logging.file_log_level')} size="sm">
@@ -301,5 +309,12 @@ export default class extends React.Component {
 
     componentDidMount() {
         this.showHelp("Sync settings of user groups mappings and other information");
-    }
+        let limitcheck = this.props.configData.limits.max_adobe_only_users;
+        if (limitcheck.length >= 2) {
+        let percentcheck = limitcheck.slice(-1);
+            if (percentcheck === "%") {
+                this.props.setLimit();
+            }
+        }
+    } 
 }
