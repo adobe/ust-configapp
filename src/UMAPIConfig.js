@@ -97,8 +97,8 @@ export default class extends React.Component {
                         <Input type="text" value={ent.tech_acct} onChange={this.handleChange('tech_acct')} placeholder="Enter Tech Account ID" size="sm" />
                     </FormGroup>
                     <FormGroup className="col-sm-6">
-                        <Label>API Key (Client ID)</Label>
-                        <Input type="text" value={ent.api_key} onChange={this.handleChange('api_key')} placeholder="Enter API Key" size="sm" />
+                        <Label>Client ID</Label>
+                        <Input type="text" value={ent.api_key} onChange={this.handleChange('api_key')} placeholder="Enter Client Id" size="sm" />
                     </FormGroup>
                     <FormGroup className="col-sm-6">
                         <Label>Client Secret</Label>
